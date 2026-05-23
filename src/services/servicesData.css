@@ -1,0 +1,107 @@
+/* Container like Home page */
+.services-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* Home title */
+.services-container h2 {
+  font-size: 2rem;
+  text-align: center;
+  color: #1e40af;
+  margin-bottom: 20px;
+}
+
+/* Grid pages like Home page */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+}
+
+/* Individual service card */
+.service-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+/* Service title */
+.service-card h3 {
+  font-size: 1.3rem;
+  color: #2563eb;
+  margin-bottom: 12px;
+}
+
+/* Short description */
+.service-card p {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+/* Book button */
+.service-card button {
+  padding: 12px 22px;
+  background: #2563eb;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.service-card button:hover {
+  background: #1d4ed8;
+}
+
+/* Detailed service info */
+.service-details {
+  margin-top: 15px;
+  font-size: 0.9rem;
+  color: #333;
+  line-height: 1.5;
+}
+
+.service-details ul {
+  margin: 8px 0;
+  padding-left: 18px;
+}
+
+.service-details li {
+  margin-bottom: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .services-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .services-container {
+    padding: 20px 15px;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr; /* single column on mobile */
+    gap: 20px;
+  }
+}

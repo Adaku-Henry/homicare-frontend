@@ -1,0 +1,189 @@
+/* =========================
+   WALLET CONTAINER
+========================= */
+.wallet-container {
+  padding: 20px;
+  background: #0f172a;
+  color: white;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* =========================
+   HEADER
+========================= */
+.wallet-header h2 {
+  margin: 0;
+}
+
+.wallet-header p {
+  opacity: 0.7;
+  margin-top: 5px;
+}
+
+/* =========================
+   BALANCE CARD
+========================= */
+.balance-card {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+/* =========================
+   ACTION BUTTONS (TOPUP / WITHDRAW)
+========================= */
+.wallet-actions .btn {
+  margin-left: 10px;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.topup {
+  background: #22c55e;
+  color: white;
+}
+
+.withdraw {
+  background: #ef4444;
+  color: white;
+}
+
+/* =========================
+   QUICK ACTIONS
+========================= */
+.quick-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* Generic button */
+.btn {
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+/* =========================
+   WALLET SUMMARY
+========================= */
+.wallet-summary {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* =========================
+   TRANSACTIONS
+========================= */
+.transactions {
+  margin-top: 20px;
+}
+
+.tx-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  margin-top: 10px;
+  border-radius: 8px;
+}
+
+/* Transaction types */
+.tx-item.credit {
+  border-left: 4px solid #00e676;
+}
+
+.tx-item.debit {
+  border-left: 4px solid #ff1744;
+}
+
+/* =========================
+   WALLET STATS
+========================= */
+.wallet-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* =========================
+   MODALS
+========================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: white;
+  color: black;
+  width: 320px;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+/* =========================
+   TOAST NOTIFICATION
+========================= */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: #111;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* =========================
+   PAYMENT METHODS
+========================= */
+.method-btn {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Payment types */
+.stk {
+  background: #22c55e;
+  color: white;
+}
+
+.ussd {
+  background: #3b82f6;
+  color: white;
+}
+
+.bank {
+  background: #f59e0b;
+  color: white;
+}
+
+/* Cancel button */
+.cancel-btn {
+  background: #ef4444;
+  color: white;
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 10px;
+}

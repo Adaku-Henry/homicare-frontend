@@ -1,0 +1,44 @@
+.user-search-container {
+  background: #0f172a;
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  margin: 10px 0;
+}
+
+.results {
+  margin-top: 10px;
+}
+
+.user-card {
+  display: flex;
+  justify-content: space-between;
+  background: #1e293b;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.user-card button {
+  background: #22c55e;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
+
+.loading {
+  color: #94a3b8;
+}
+
+.no-results {
+  color: #f87171;
+}

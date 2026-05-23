@@ -1,0 +1,48 @@
+/* src/pages/providers/ProviderBookingForm.css */
+.booking-form {
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  font-family: Arial, sans-serif;
+}
+
+.booking-form h3 {
+  color: #1f3d7a;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.booking-form label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+  font-weight: bold;
+}
+
+.booking-form input,
+.booking-form select,
+.booking-form textarea {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.booking-form button {
+  background-color: #1f3d7a;
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  font-weight: bold;
+}
+
+.booking-form button:hover {
+  background-color: #3f5ea5;
+}

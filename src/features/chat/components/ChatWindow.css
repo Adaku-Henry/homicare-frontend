@@ -1,0 +1,254 @@
+/* ================= GLOBAL WRAPPER ================= */
+.chatWrapper {
+  position: fixed;
+  top: 70px;              /* below navbar */
+  left: 460px;            /* IMPORTANT: pushes away from main sidebar */
+  right: 30px;
+  bottom: 30px;
+
+  display: flex;
+  flex-direction: column;
+
+  width: calc(100% - 300px);
+  max-width: 900px;
+
+  background: #0f172a;
+  border-radius: 16px;
+  overflow: hidden;
+
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+}
+
+/* ================= HEADER ================= */
+.chatHeader {
+  height: 60px;
+  background: #111827;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 15px;
+  color: white;
+
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.chatUser {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.typing {
+  font-size: 12px;
+  color: #38bdf8;
+}
+
+.addBtn {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: none;
+  background: #3b82f6;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* ================= CHAT BODY ================= */
+.chatBody {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+}
+
+/* scroll bar */
+.chatBody::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chatBody::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 10px;
+}
+
+/* ================= MESSAGE ================= */
+.msg {
+  max-width: 70%;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  font-size: 14px;
+  position: relative;
+  animation: pop 0.2s ease;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.msg.me {
+  margin-left: auto;
+  background: #3b82f6;
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.msg.other {
+  margin-right: auto;
+  background: #1f2937;
+  color: white;
+  border-bottom-left-radius: 4px;
+}
+
+.msgTime {
+  font-size: 10px;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+/* ================= INPUT BAR ================= */
+.chatInputBar {
+  display: flex;
+  padding: 10px;
+  background: #111827;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.chatInput {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+
+  background: #1f2937;
+  color: white;
+}
+
+.sendBtn {
+  margin-left: 10px;
+  width: 45px;
+  border-radius: 8px;
+  border: none;
+  background: #22c55e;
+  color: white;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* ================= DRAWER (FIXED INSIDE CHAT) ================= */
+.drawer {
+  position: absolute;
+  right: -320px;   /* hidden */
+  top: 0;
+  width: 300px;
+  height: 100%;
+
+  background: #0b1220;
+  color: white;
+
+  padding: 15px;
+  transition: 0.3s ease;
+
+  box-shadow: -10px 0 30px rgba(0,0,0,0.4);
+  overflow-y: auto;
+}
+
+.drawer.open {
+  right: 0;
+}
+
+/* drawer inputs */
+.drawer input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
+
+  border: none;
+  border-radius: 6px;
+  background: #1f2937;
+  color: white;
+}
+
+/* buttons */
+.drawer button {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+
+  border: none;
+  border-radius: 6px;
+
+  background: #3b82f6;
+  color: white;
+  cursor: pointer;
+}
+
+/* contact cards */
+.contactList {
+  margin-top: 10px;
+}
+
+.contactCard {
+  background: #111827;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.contactCard:hover {
+  transform: translateY(-2px);
+  background: #1f2937;
+}
+
+.contactActions {
+  display: flex;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.contactActions button {
+  flex: 1;
+  font-size: 10px;
+  padding: 5px;
+  background: #2563eb;
+}
+
+/* ================= EMPTY STATE ================= */
+.emptyChat {
+  margin-left: 260px;
+  margin-top: 100px;
+
+  color: #94a3b8;
+  font-size: 18px;
+  text-align: center;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 900px) {
+  .chatWrapper {
+    left: 20px;
+    width: 100%;
+    border-radius: 0;
+  }
+
+  .emptyChat {
+    margin-left: 5px;
+  }
+
+  .drawer {
+    width: 260px;
+  }
+}

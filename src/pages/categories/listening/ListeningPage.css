@@ -1,0 +1,28 @@
+.listening-page{
+
+padding:20px;
+margin-left:250px;
+max-width:calc(100% - 250px);
+
+}
+
+.listening-search{
+
+width:100%;
+padding:12px;
+border-radius:8px;
+border:1px solid #ddd;
+margin-bottom:20px;
+
+}
+
+@media(max-width:768px){
+
+.listening-page{
+
+margin-left:0;
+max-width:100%;
+
+}
+
+}

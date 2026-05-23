@@ -1,0 +1,29 @@
+.booking-container{
+  display:flex;
+  justify-content:center;
+  margin-top:50px;
+}
+
+.booking-card{
+  background:white;
+  padding:30px;
+  width:400px;
+  border-radius:10px;
+  box-shadow:0 3px 12px rgba(0,0,0,0.1);
+}
+
+.booking-card input{
+  width:100%;
+  padding:10px;
+  margin-top:5px;
+}
+
+.confirm-btn{
+  width:100%;
+  padding:12px;
+  background:#2e8b57;
+  color:white;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}

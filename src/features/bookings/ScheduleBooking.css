@@ -1,0 +1,101 @@
+/* ================= CONTAINER ================= */
+.schedule-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+  padding: 20px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* ================= TITLE ================= */
+.schedule-container h2 {
+  margin-bottom: 15px;
+  color: #1f2937;
+}
+
+/* ================= TIME GRID ================= */
+.times-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 12px;
+  width: 100%;
+  margin: 15px 0;
+}
+
+/* ================= TIME BUTTON ================= */
+.times-grid button {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #2e8b57;
+  cursor: pointer;
+  background: white;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+/* 🔥 HOVER EFFECT */
+.times-grid button:hover {
+  background: #2e8b57;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* 🔥 SELECTED STATE */
+.times-grid button.selected {
+  background: #2e8b57;
+  color: white;
+  border: none;
+  box-shadow: 0 3px 10px rgba(46, 139, 87, 0.3);
+}
+
+/* ❌ DISABLED SLOT */
+.times-grid button.disabled {
+  background: #e5e7eb;
+  border: none;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* ================= CONFIRM BUTTON ================= */
+.confirm-btn {
+  margin-top: 25px;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #2e8b57, #3cb371);
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+/* 🔥 BUTTON HOVER */
+.confirm-btn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 5px 15px rgba(46, 139, 87, 0.4);
+}
+
+/* ❌ DISABLED BUTTON */
+.confirm-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 500px) {
+  .schedule-container {
+    padding: 15px;
+  }
+
+  .times-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

@@ -1,0 +1,27 @@
+.booking-layout{
+display:flex;
+}
+
+.booking-sidebar{
+width:220px;
+background:#f3f3f3;
+height:100vh;
+padding:20px;
+}
+
+.booking-content{
+flex:1;
+padding:30px;
+}
+
+.booking-card{
+border:1px solid #ddd;
+padding:15px;
+margin-bottom:15px;
+}
+
+.stat{
+background:#eee;
+padding:20px;
+margin:10px;
+}

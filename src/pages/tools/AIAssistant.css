@@ -1,0 +1,114 @@
+.ai-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #0f172a;
+  color: white;
+}
+
+/* HEADER */
+.ai-header {
+  padding: 15px;
+  background: #1e293b;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* CHAT AREA */
+.ai-chat {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* MESSAGES */
+.msg {
+  display: flex;
+  flex-direction: column;
+  max-width: 70%;
+}
+
+.msg.user {
+  align-self: flex-end;
+}
+
+.msg.ai {
+  align-self: flex-start;
+}
+
+.bubble {
+  padding: 10px 14px;
+  border-radius: 15px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.msg.user .bubble {
+  background: #4f46e5;
+}
+
+.msg.ai .bubble {
+  background: #334155;
+}
+
+/* TIME */
+.time {
+  font-size: 10px;
+  opacity: 0.6;
+  margin-top: 3px;
+}
+
+/* TYPING */
+.typing {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* QUICK REPLIES */
+.quick {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  overflow-x: auto;
+}
+
+.quick button {
+  background: #334155;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+/* INPUT */
+.ai-input {
+  display: flex;
+  padding: 10px;
+  background: #1e293b;
+}
+
+.ai-input input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 20px;
+  border: none;
+  outline: none;
+}
+
+.ai-input button {
+  margin-left: 10px;
+  padding: 10px 15px;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 20px;
+}
+
+/* ANIMATION */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

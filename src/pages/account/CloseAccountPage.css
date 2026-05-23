@@ -1,0 +1,134 @@
+/* src/pages/account/CloseAccountPage.css */
+
+.close-account-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 20px;
+  margin-left: 250px; /* Sidebar width */
+  max-width: calc(100% - 250px);
+  box-sizing: border-box;
+}
+
+.close-account-page h1 {
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+
+.warning-section {
+  padding: 15px;
+  border-radius: 10px;
+  background-color: #ffe5e5;
+  border: 1px solid #ff4d4d;
+  margin-bottom: 25px;
+}
+
+.warning-section h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #b30000;
+}
+
+.warning-section p {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.reason-section {
+  margin-bottom: 25px;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: #f7f7f7;
+}
+
+.reason-section h2 {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.reason-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.reason-option input[type="radio"],
+.reason-option input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.feedback-section {
+  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+}
+
+.feedback-section label {
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.feedback-section textarea {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #151dae;
+  font-size: 16px;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.close-btn {
+  padding: 12px 20px;
+  font-size: 16px;
+  background-color: #ff4d4d;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.close-btn:hover {
+  background-color: #e60000;
+}
+
+/* Responsive design */
+@media screen and (max-width: 1024px) {
+  .close-account-page {
+    margin-left: 200px;
+    max-width: calc(100% - 200px);
+    padding: 18px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .close-account-page {
+    margin-left: 0;
+    max-width: 100%;
+    padding: 15px;
+  }
+
+  .reason-section, .warning-section, .feedback-section {
+    padding: 12px;
+  }
+
+  .close-btn {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .close-account-page h1 {
+    font-size: 24px;
+  }
+
+  .reason-section h2,
+  .warning-section h2 {
+    font-size: 18px;
+  }
+
+  .feedback-section textarea {
+    font-size: 14px;
+  }
+}

@@ -1,0 +1,6 @@
+.page-content {
+  margin-top: 70px; /* Avoid overlapping with sticky navbar */
+  padding: 20px 30px; /* Space from screen edges / sidebar */
+  min-height: calc(100vh - 70px); /* Full height minus navbar */
+  background-color: #f5f5f5; /* Light background */
+}

@@ -1,0 +1,60 @@
+.provider-profile {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.provider-profile h2 {
+  color: #1f3d7a;
+  margin-bottom: 10px;
+}
+
+.provider-profile p {
+  margin: 5px 0;
+  color: #333;
+}
+
+.provider-section {
+  margin-bottom: 15px;
+}
+
+.provider-section h4 {
+  margin-bottom: 5px;
+  color: #1f3d7a;
+}
+
+.provider-services,
+.provider-skills,
+.provider-certifications,
+.provider-tools,
+.provider-coverage {
+  list-style: disc;
+  padding-left: 20px;
+}
+
+.booking-form {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f5f5f5;
+  border-radius: 10px;
+}
+
+.booking-form input,
+.booking-form select,
+.booking-form textarea {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.booking-form button {
+  background: #1f3d7a;
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}

@@ -1,0 +1,79 @@
+/* src/pages/account/AccountSettingsPage.css */
+
+.account-settings-page-container {
+  display: flex;       /* Make pages a flex container */
+  flex-direction: column;
+  flex: 1;             /* Fill available space beside sidebar */
+  padding: 20px;
+  margin-left: 250px;  /* Adjust according to your sidebar width */
+  max-width: calc(100% - 250px); /* Ensure content doesn't overflow */
+  box-sizing: border-box;
+}
+
+.account-settings-page h1 {
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+
+.settings-section {
+  margin-bottom: 25px;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: #f7f7f7;
+}
+
+.settings-section h2 {
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #151dae;
+  font-size: 16px;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.save-btn {
+  padding: 12px 20px;
+  font-size: 16px;
+  background-color: #1d4ed8;
+  color: #fd4d00;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.save-btn:hover {
+  background-color: #2563eb;
+}
+
+/* Responsive: for smaller screens, sidebar collapses */
+@media screen and (max-width: 768px) {
+  .account-settings-page-container {
+    margin-left: 0;
+    max-width: 100%;
+    padding: 15px;
+  }
+}

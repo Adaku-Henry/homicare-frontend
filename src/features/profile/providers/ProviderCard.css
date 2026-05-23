@@ -1,0 +1,39 @@
+.provider-card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-top: 15px;
+}
+
+.provider-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.rating {
+  color: orange;
+}
+
+.service {
+  margin-top: 5px;
+  color: gray;
+}
+
+.provider-meta {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.provider-card button {
+  margin-top: 10px;
+  width: 100%;
+  padding: 10px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}

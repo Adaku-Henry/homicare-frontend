@@ -1,0 +1,71 @@
+.app-layout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background: #f5f6fa;
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar-container {
+  width: 260px;
+  flex-shrink: 0;
+  height: 100vh;
+  background: #0b4d0b;
+  color: white;
+  overflow-y: auto;
+}
+
+/* ================= MAIN AREA ================= */
+.main-area {
+  flex: 1;
+  min-width: 0; /* 🔥 CRITICAL FIX (prevents behind-sidebar rendering) */
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ================= TOP NAV ================= */
+.topbar {
+  height: 60px;
+  flex-shrink: 0;
+  background: white;
+  border-bottom: 1px solid #eee;
+  z-index: 10;
+}
+
+/* ================= PAGE CONTENT ================= */
+.page-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background: #f5f6fa;
+
+  /* 🔥 IMPORTANT: prevents content slipping under sidebar */
+  position: relative;
+  z-index: 1;
+}
+
+/* ================= DASHBOARD CARDS WRAP FIX ================= */
+/* This ensures content automatically goes to new line instead of hiding behind sidebar */
+.page-content > * {
+  max-width: 100%;
+  word-wrap: break-word;
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 991px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .sidebar-container {
+    width: 100%;
+    height: auto;
+  }
+
+  .main-area {
+    width: 100%;
+  }
+}

@@ -1,0 +1,231 @@
+/* ================= RESET ================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Inter, Arial, sans-serif;
+  background: #f4f6fb;
+  overflow: hidden; /* prevents double scroll */
+}
+
+/* ================= ROOT LAYOUT ================= */
+.admin-wrapper {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* ================= SIDEBAR (PREMIUM SaaS STYLE) ================= */
+.admin-sidebar {
+  width: 260px;
+  height: 100vh;
+
+  position: fixed;
+  left: 0;
+  top: 0;
+
+  background: linear-gradient(180deg, #0f172a, #111827);
+  color: white;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 20px 12px;
+
+  z-index: 1000;
+  transition: 0.3s ease;
+}
+
+/* Sidebar title */
+.admin-sidebar h2 {
+  font-size: 18px;
+  margin-bottom: 20px;
+  padding-left: 10px;
+  color: #60a5fa;
+}
+
+/* Sidebar links */
+.admin-sidebar a {
+  padding: 12px 14px;
+  margin: 4px 0;
+  border-radius: 8px;
+
+  text-decoration: none;
+  color: #cbd5e1;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  transition: 0.2s ease;
+}
+
+.admin-sidebar a:hover {
+  background: rgba(255,255,255,0.08);
+  color: white;
+  transform: translateX(3px);
+}
+
+/* Active link */
+.admin-sidebar a.active {
+  background: #2563eb;
+  color: white;
+}
+
+/* ================= MAIN AREA ================= */
+.admin-main {
+  margin-left: 260px;
+  width: calc(100% - 260px);
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* ================= TOP NAVBAR ================= */
+.admin-navbar {
+  height: 65px;
+
+  position: fixed;
+  top: 0;
+  left: 260px;
+
+  width: calc(100% - 260px);
+
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(10px);
+
+  border-bottom: 1px solid #e5e7eb;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 20px;
+
+  z-index: 900;
+}
+
+/* Navbar title */
+.admin-navbar h3 {
+  font-size: 16px;
+  color: #111827;
+}
+
+/* ================= CONTENT AREA ================= */
+.admin-content {
+  margin-top: 65px;
+
+  height: calc(100vh - 65px);
+  overflow-y: auto;
+
+  padding: 25px;
+
+  background: #f8fafc;
+}
+
+/* ================= DASHBOARD GRID ================= */
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+/* ================= CARDS ================= */
+.admin-card {
+  background: white;
+  border-radius: 14px;
+
+  padding: 18px;
+
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+
+  transition: 0.25s ease;
+}
+
+.admin-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+}
+
+/* ================= BUTTONS ================= */
+.admin-btn {
+  padding: 10px 14px;
+
+  background: #2563eb;
+  color: white;
+
+  border: none;
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.admin-btn:hover {
+  background: #1d4ed8;
+  transform: scale(1.02);
+}
+
+/* ================= TABLE STYLE ================= */
+.admin-table {
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+
+  overflow: hidden;
+
+  box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.admin-table th {
+  background: #f1f5f9;
+}
+
+/* ================= MOBILE RESPONSIVE ================= */
+@media (max-width: 900px) {
+  .admin-sidebar {
+    width: 220px;
+  }
+
+  .admin-main {
+    margin-left: 220px;
+    width: calc(100% - 220px);
+  }
+
+  .admin-navbar {
+    left: 220px;
+    width: calc(100% - 220px);
+  }
+}
+
+/* ================= COLLAPSE MODE (future toggle) ================= */
+.admin-sidebar.collapsed {
+  width: 80px;
+}
+
+.admin-sidebar.collapsed a span {
+  display: none;
+}
+
+.admin-main.collapsed {
+  margin-left: 80px;
+  width: calc(100% - 80px);
+}
+
+.admin-navbar.collapsed {
+  left: 280px;
+  width: calc(100% - 80px);
+}

@@ -1,0 +1,18 @@
+.wallet-balance {
+  background-color: #f7f7f7;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.wallet-balance h2 {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.wallet-balance p {
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+}

@@ -1,0 +1,151 @@
+/* src/pages/categories/CategoryPage.css */
+
+/* General page styling */
+.category-page, .category-subpage {
+  padding: 20px;
+  max-width: 1000px;
+  margin: auto;
+  font-family: Arial, sans-serif;
+}
+
+.category-page h1, .category-subpage h2 {
+  font-size: 28px;
+  text-align: center;
+  margin-bottom: 25px;
+  color: #1f3d7a;
+}
+
+/* Categories grid */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+/* Category card */
+.category-card, .subcategory-card, .provider-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+
+.category-card:hover, .subcategory-card:hover, .provider-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.category-icon, .subcategory-icon {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+/* Subcategory tweaks */
+.category-subpage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.subcategories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 900px;
+}
+
+.subcategory-card h4 {
+  margin: 10px 0 5px 0;
+  color: #1f3d7a;
+  font-size: 18px;
+}
+
+.subcategory-card p {
+  font-size: 12px;
+  color: #555;
+}
+
+.subcategory-icon {
+  font-size: 50px;
+}
+
+/* Badge */
+.category-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #ff7a00;
+  color: white;
+  font-size: 11px;
+  padding: 3px 7px;
+  border-radius: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Providers grid */
+.providers-grid, .featured-grid, .promotions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* Featured / Promotions */
+.featured-section, .trending-section, .promotions-section {
+  margin-top: 40px;
+}
+
+.featured-section h2, .trending-section h2, .promotions-section h2 {
+  color: #1f3d7a;
+  margin-bottom: 15px;
+}
+
+.featured-card, .promo-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Trending list */
+.trending-list {
+  list-style: disc;
+  padding-left: 20px;
+}
+
+.trending-list li {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Links inside categories grid */
+.categories-grid a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+/* Responsive adjustments */
+@media(max-width: 480px){
+  .category-card, .featured-card, .promo-card, .provider-card, .subcategory-card {
+    padding: 12px;
+  }
+  .category-icon {
+    font-size: 28px;
+  }
+  .subcategory-icon {
+    font-size: 36px;
+  }
+  .category-page h1, .category-subpage h2 {
+    font-size: 22px;
+  }
+}

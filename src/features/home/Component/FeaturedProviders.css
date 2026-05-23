@@ -1,0 +1,174 @@
+/* ================= CONTAINER ================= */
+.fp-container {
+  margin-left: 260px;
+  padding: 20px;
+  background: #f5f7fb;
+  min-height: 100vh;
+}
+
+/* ================= TITLE ================= */
+.fp-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+/* ================= SEARCH ================= */
+.fp-search {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  margin-bottom: 15px;
+}
+
+/* ================= FILTER ================= */
+.fp-filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.fp-filter {
+  padding: 8px 15px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  background: #eee;
+}
+
+.fp-filter.active {
+  background: #16a34a;
+  color: white;
+}
+
+/* ================= GRID ================= */
+.fp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+/* ================= CARD ================= */
+.fp-card {
+  background: white;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: 0.2s;
+}
+
+.fp-card:hover {
+  transform: translateY(-5px);
+}
+
+/* HEADER */
+.fp-card-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* HEART */
+.fp-heart {
+  cursor: pointer;
+  color: #ccc;
+}
+
+.fp-heart.active {
+  color: red;
+}
+
+/* DETAILS */
+.fp-details {
+  font-size: 14px;
+  color: #555;
+}
+
+/* ACTIONS */
+.fp-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.fp-actions button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.fp-actions button:nth-child(1) {
+  background: #16a34a;
+  color: white;
+}
+
+.fp-actions button:nth-child(2) {
+  background: #2563eb;
+  color: white;
+}
+
+.fp-actions button:nth-child(3) {
+  background: #111827;
+  color: white;
+}
+
+/* ================= MODAL ================= */
+.fp-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.fp-modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 300px;
+}
+
+/* ================= NOTIFICATIONS ================= */
+.fp-notifications {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+}
+
+.fp-notification {
+  background: #16a34a;
+  color: white;
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 6px;
+}
+
+/* ================= MOBILE NAV ================= */
+.fp-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 260px;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  background: white;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 900px) {
+  .fp-container {
+    margin-left: 0;
+  }
+
+  .fp-bottom-bar {
+    left: 0;
+  }
+}

@@ -1,0 +1,48 @@
+.quick-wallet-summary {
+  background-color: #f7f7f7;
+  border-radius: 12px;
+  padding: 15px;
+  width: 250px;
+  position: sticky;
+  top: 20px;
+  margin-left: 20px;
+  max-height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.quick-wallet-summary h4 {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.quick-wallet-summary .balance {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.transactions-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  max-height: 320px;
+}
+
+.transaction-card {
+  background-color: #e0e7ff;
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.transaction-card .type {
+  color: #1d4ed8;
+}
+
+.transaction-card .status {
+  color: green;
+}

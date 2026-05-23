@@ -1,0 +1,54 @@
+.dashboard-container {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.booking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 400px;
+}
+
+.booking-card {
+  padding: 20px;
+  border-radius: 10px;
+  background: white;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.booking-card h3 {
+  margin-bottom: 10px;
+}
+
+.booking-card p {
+  margin: 5px 0;
+}
+
+.status.pending {
+  color: orange;
+  font-weight: bold;
+}
+
+.status.confirmed {
+  color: green;
+  font-weight: bold;
+}
+
+.status.cancelled {
+  color: red;
+  font-weight: bold;
+}
+
+.cancel-btn {
+  margin-top: 10px;
+  background: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  border-radius: 6px;
+  cursor: pointer;
+}
