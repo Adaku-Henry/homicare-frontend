@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useAuth } from "./AuthContext";
+import { useAuth } from "../../../context/AuthContext";
 
 const ProfileContext = createContext();
+
+// ✅ single clean hook
 export const useProfileContext = () => useContext(ProfileContext);
 
 const defaultProfile = {
@@ -10,11 +12,12 @@ const defaultProfile = {
   phone: "",
   avatar: "",
   bio: "",
+  location: "",
+  address: "",
+  city: "",
   skills: [],
   experience: "",
   rate: "",
-  city: "",
-  address: "",
   availability: "",
   connections: "",
 };
@@ -25,6 +28,7 @@ export const ProfileProvider = ({ children }) => {
   const [profile, setProfile] = useState(defaultProfile);
   const [loadingProfile, setLoadingProfile] = useState(true);
 
+  // ================= LOAD PROFILE =================
   useEffect(() => {
     if (loading) return;
 
@@ -34,32 +38,45 @@ export const ProfileProvider = ({ children }) => {
       return;
     }
 
-    const key = `homicare_profile_${user.id}`;
-    const saved = localStorage.getItem(key);
+    try {
+      const key = `homicare_profile_${user.id}`;
+      const saved = localStorage.getItem(key);
 
-    if (saved) {
-      setProfile(JSON.parse(saved));
-    } else {
-      setProfile({
-        ...defaultProfile,
-        fullName: user.name || "",
-        email: user.email || "",
-        phone: user.phone || "",
-      });
+      if (saved) {
+        setProfile(JSON.parse(saved));
+      } else {
+        const initialProfile = {
+          ...defaultProfile,
+          fullName: user.name || "",
+          email: user.email || "",
+          phone: user.phone || "",
+        };
+
+        localStorage.setItem(key, JSON.stringify(initialProfile));
+        setProfile(initialProfile);
+      }
+    } catch (err) {
+      console.error("Profile load error:", err);
+      setProfile(defaultProfile);
     }
 
     setLoadingProfile(false);
   }, [user, loading]);
 
-  useEffect(() => {
+  // ================= UPDATE PROFILE =================
+  const updateProfile = (data) => {
     if (!user) return;
 
-    const key = `homicare_profile_${user.id}`;
-    localStorage.setItem(key, JSON.stringify(profile));
-  }, [profile, user]);
+    setProfile((prev) => {
+      const updated = { ...prev, ...data };
 
-  const updateProfile = (data) => {
-    setProfile((prev) => ({ ...prev, ...data }));
+      localStorage.setItem(
+        `homicare_profile_${user.id}`,
+        JSON.stringify(updated)
+      );
+
+      return updated;
+    });
   };
 
   return (

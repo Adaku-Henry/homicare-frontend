@@ -1,6 +1,5 @@
 import React from "react";
-import { useProfileContext } from "../context/ProfileContext";
-
+import { useAuth } from "../../../context/AuthContext";
 function ProviderProfile() {
   const { profile, loading } = useProfileContext();
 
