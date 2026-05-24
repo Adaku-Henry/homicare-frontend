@@ -5,6 +5,7 @@ function ProviderProfile() {
   const { profile, loading } = useProfileContext();
 
   if (loading) return <p>Loading profile...</p>;
+  if (!profile) return <p>No profile found</p>;
 
   return (
     <div className="provider-profile">
@@ -18,9 +19,15 @@ function ProviderProfile() {
           className="profile-avatar"
         />
 
-        <h2>{profile.fullName || "No Name Added"}</h2>
-        <p>{profile.experience || "No experience added"}</p>
-        <p>⭐ {profile.rate || "0"}</p>
+        <h2>{profile.name || "No Name Added"}</h2>
+
+        <p>
+          {Array.isArray(profile.experience) && profile.experience.length > 0
+            ? profile.experience.join(", ")
+            : "No experience added"}
+        </p>
+
+        <p>⭐ {profile.rating ?? 0}</p>
       </div>
 
       {/* ABOUT */}
@@ -32,7 +39,12 @@ function ProviderProfile() {
       {/* SKILLS */}
       <div className="provider-section">
         <h4>Skills</h4>
-        <p>{profile.skills || "No skills added yet"}</p>
+
+        <p>
+          {Array.isArray(profile.skills) && profile.skills.length > 0
+            ? profile.skills.join(", ")
+            : "No skills added yet"}
+        </p>
       </div>
 
     </div>

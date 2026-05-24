@@ -3,27 +3,44 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
+// ================= DEFAULT USER =================
+const defaultUser = (email = "") => ({
+  id: null,
+  name: "",
+  email,
+  phone: "",
+  role: "user",
+  service: "",
+  bio: "",
+  location: "",
+  skills: [],
+  experience: [],
+  education: [],
+  pricePerHour: "",
+  available: true,
+  avatar: "",
+  wallet: 0,
+  rating: 0,
+  reviews: 0,
+  jobs: 0,
+});
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // ================= INIT =================
   useEffect(() => {
-    try {
-      const savedUser = JSON.parse(localStorage.getItem("user"));
-      const savedToken = localStorage.getItem("token");
+    const savedUser = localStorage.getItem("user");
+    const savedToken = localStorage.getItem("token");
 
-      if (savedUser && savedToken) {
-        setUser(savedUser);
-        setToken(savedToken);
-      }
-    } catch (err) {
-      console.log("Restore error:", err);
-      localStorage.clear();
-    } finally {
-      setLoading(false);
+    if (savedUser && savedToken) {
+      setUser(JSON.parse(savedUser));
+      setToken(savedToken);
     }
+
+    setLoading(false);
   }, []);
 
   // ================= LOGIN =================
@@ -36,35 +53,25 @@ export const AuthProvider = ({ children }) => {
       });
 
       const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.detail || "Login failed");
-      }
+      if (!res.ok) throw new Error(data.detail || "Login failed");
 
       localStorage.setItem("token", data.access);
       setToken(data.access);
 
-      // GET PROFILE
+      // profile
       const profileRes = await fetch("http://localhost:8000/api/profile/", {
         headers: { Authorization: `Bearer ${data.access}` },
       });
 
       let profile = await profileRes.json();
-
-      // 🔥 FALLBACK if backend fails
-      if (!profile || profile.error) {
-        profile = createDefaultUser(email);
-      }
+      if (!profile || profile.error) profile = defaultUser(email);
 
       localStorage.setItem("user", JSON.stringify(profile));
       setUser(profile);
 
-      return { success: true, role: profile.role };
-
+      return { success: true, role: profile.role || "user" };
     } catch (err) {
-      console.warn("Login fallback activated");
-
-      const fakeUser = createDefaultUser(email);
+      const fakeUser = defaultUser(email);
 
       localStorage.setItem("user", JSON.stringify(fakeUser));
       localStorage.setItem("token", "temp-token");
@@ -72,7 +79,7 @@ export const AuthProvider = ({ children }) => {
       setUser(fakeUser);
       setToken("temp-token");
 
-      return { success: true, role: "provider" };
+      return { success: true, role: "user" };
     }
   };
 
@@ -88,32 +95,14 @@ export const AuthProvider = ({ children }) => {
           password,
         }),
       });
-    } catch (err) {
-      console.warn("Register fallback");
-    }
+    } catch {}
 
-    // 🔥 CREATE FULL USER PROFILE
     const newUser = {
+      ...defaultUser(email),
       id: Date.now(),
       name: fullName,
-      email,
       phone,
-      role: "provider",
-
-      service: "",
-      bio: "",
-      location: "",
-      skills: [],
-      experience: [],
-      education: [],
-      pricePerHour: "",
-      available: true,
-      avatar: "",
-
-      wallet: 0,
-      rating: 0,
-      reviews: 0,
-      jobs: 0,
+      role: "user",
     };
 
     localStorage.setItem("user", JSON.stringify(newUser));
@@ -127,31 +116,25 @@ export const AuthProvider = ({ children }) => {
 
   // ================= UPDATE PROFILE =================
   const updateProfile = (updates) => {
+    if (!user) return;
+
     const updatedUser = { ...user, ...updates };
 
     setUser(updatedUser);
     localStorage.setItem("user", JSON.stringify(updatedUser));
   };
 
-  // ================= LOGOUT =================
+  // ================= LOGOUT (FIXED ROUTING ISSUE) =================
   const logout = () => {
-    localStorage.clear();
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+
     setUser(null);
     setToken(null);
+
+    // IMPORTANT FIX (prevents "Not Found")
     window.location.href = "/login";
   };
-
-  // ================= DEFAULT USER =================
-  const createDefaultUser = (email) => ({
-    id: Date.now(),
-    name: email,
-    email,
-    role: "provider",
-    skills: [],
-    experience: [],
-    education: [],
-    available: true,
-  });
 
   return (
     <AuthContext.Provider
@@ -163,7 +146,7 @@ export const AuthProvider = ({ children }) => {
         updateProfile,
         logout,
         loading,
-        isAuthenticated: !!token,
+        isAuthenticated: !!user && !!token,
       }}
     >
       {children}

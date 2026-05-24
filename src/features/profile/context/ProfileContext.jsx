@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "./AuthContext";
 
 const ProfileContext = createContext();
+export const useProfileContext = () => useContext(ProfileContext);
 
 const defaultProfile = {
   fullName: "",
@@ -9,21 +10,17 @@ const defaultProfile = {
   phone: "",
   avatar: "",
   bio: "",
-  skills: "",
+  skills: [],
   experience: "",
   rate: "",
   city: "",
   address: "",
   availability: "",
-
-  // 🔥 ADDED
   connections: "",
 };
 
 export const ProfileProvider = ({ children }) => {
   const { user, loading } = useAuth();
-
-  const storageKey = user?.id ? `homicare_profile_${user.id}` : null;
 
   const [profile, setProfile] = useState(defaultProfile);
   const [loadingProfile, setLoadingProfile] = useState(true);
@@ -31,45 +28,49 @@ export const ProfileProvider = ({ children }) => {
   useEffect(() => {
     if (loading) return;
 
-    if (!user?.id) {
+    if (!user) {
       setProfile(defaultProfile);
       setLoadingProfile(false);
       return;
     }
 
-    const saved = localStorage.getItem(storageKey);
+    const key = `homicare_profile_${user.id}`;
+    const saved = localStorage.getItem(key);
 
     if (saved) {
       setProfile(JSON.parse(saved));
     } else {
       setProfile({
         ...defaultProfile,
-        fullName: user?.fullName || "",
-        email: user?.email || "",
+        fullName: user.name || "",
+        email: user.email || "",
+        phone: user.phone || "",
       });
     }
 
     setLoadingProfile(false);
-  }, [user, loading, storageKey]);
+  }, [user, loading]);
 
   useEffect(() => {
-    if (!storageKey) return;
-    localStorage.setItem(storageKey, JSON.stringify(profile));
-  }, [profile, storageKey]);
+    if (!user) return;
+
+    const key = `homicare_profile_${user.id}`;
+    localStorage.setItem(key, JSON.stringify(profile));
+  }, [profile, user]);
 
   const updateProfile = (data) => {
     setProfile((prev) => ({ ...prev, ...data }));
   };
 
   return (
-    <ProfileContext.Provider value={{ profile, updateProfile, loading: loadingProfile }}>
+    <ProfileContext.Provider
+      value={{
+        profile,
+        updateProfile,
+        loading: loadingProfile,
+      }}
+    >
       {children}
     </ProfileContext.Provider>
   );
-};
-
-export const useProfileContext = () => {
-  const ctx = useContext(ProfileContext);
-  if (!ctx) throw new Error("ProfileContext must be used inside Provider");
-  return ctx;
 };

@@ -29,7 +29,7 @@ import SecuritySettings from "./features/profile/pages/SecuritySettings";
 import NotificationSettings from "./features/profile/pages/NotificationSettings";
 import Preferences from "./features/profile/pages/Preferences";
 
-// ================= PROVIDERS (CLIENT SIDE) =================
+// ================= PROVIDERS =================
 import ProvidersList from "./features/profile/providers/ProvidersList";
 import ProviderProfileView from "./features/profile/pages/ProviderProfile";
 import ProviderPage from "./features/profile/providers/ProviderPage";
@@ -85,11 +85,16 @@ import Bookings from "./admin/pages/Bookings";
 import Analytics from "./admin/pages/Analytics";
 import RealTimeDashboard from "./admin/pages/RealTimeDashboard";
 
+// ================= NOT FOUND =================
+const NotFound = () => (
+  <div style={{ textAlign: "center", marginTop: 50 }}>
+    <h2>404 - Page Not Found</h2>
+  </div>
+);
+
 // ================= PROTECTED ROUTE =================
 const ProtectedRoute = ({ user, children }) => {
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+  if (!user) return <Navigate to="/login" replace />;
   return children;
 };
 
@@ -131,7 +136,7 @@ function AppWrapper() {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
-        {/* ================= PROTECTED APP ================= */}
+        {/* ================= PROTECTED ================= */}
         <Route
           path="/"
           element={
@@ -214,8 +219,8 @@ function AppWrapper() {
           {/* UNAUTHORIZED */}
           <Route path="unauthorized" element={<Unauthorized />} />
 
-          {/* FALLBACK */}
-          <Route path="*" element={<Navigate to="/" />} />
+          {/* ❗ FIXED: proper 404 instead of redirect loop */}
+          <Route path="*" element={<NotFound />} />
 
         </Route>
       </Routes>
