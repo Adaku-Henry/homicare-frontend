@@ -81,6 +81,59 @@
   position: relative;
   overflow: hidden;
 }
+.menu-item {
+  width: 100%;
+}
+
+.menu-btn {
+  width: 100%;
+  background: #08153d;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.submenu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+  padding-left: 10px;
+}
+
+.submenu li {
+  list-style: none;
+}
+
+.submenu a {
+  display: block;
+  padding: 12px 14px;
+  background: #0d1f57;
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
+.submenu a:hover {
+  background: #2563eb;
+}
+
+.submenu-title {
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: bold;
+  margin-top: 10px;
+  padding-left: 5px;
+  text-transform: uppercase;
+}
 
 /* ================= HOVER EFFECT (MODERN FLOAT) ================= */
 .menu-list a:hover,

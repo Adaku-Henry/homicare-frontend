@@ -55,26 +55,121 @@ function Sidebar() {
           )}
         </li>
 
-        {/* ================= MY ACCOUNT ================= */}
-        <li>
-          <button onClick={() => toggleMenu("profile")}>
-            <AiOutlineUser /> My Account
-          </button>
+  {/* ================= MY ACCOUNT ================= */}
+<li className="menu-item">
 
-          {activeMenu === "profile" && (
-            <ul className="submenu">
-              <li><Link to="/provider/profile">My Profile</Link></li>
-              <li><Link to="/provider/profile/edit">Edit Profile</Link></li>
-              <li><Link to="/booking">Book Service</Link></li>
-              <li><Link to="/bookings">My Bookings</Link></li>
-              <li><Link to="/wallet">Wallet</Link></li>
-              <li><Link to="/profile/notifications">Notifications</Link></li>
-              <li><Link to="/profile/preferences">Preferences</Link></li>
-              <li><Link to="/provider/dashboard">Provider Dashboard</Link></li>
-            </ul>
-          )}
-        </li>
+  <button
+    className="menu-btn"
+    onClick={() => toggleMenu("account")}
+  >
+    <span>
+      <AiOutlineUser /> My Account
+    </span>
 
+    <span>
+      {activeMenu === "account" ? "−" : "+"}
+    </span>
+  </button>
+
+  {activeMenu === "account" && (
+    <ul className="submenu">
+
+      {/* ===== CUSTOMER OPTIONS ===== */}
+      <li className="submenu-title">
+        Customer
+      </li>
+
+      <li>
+        <Link to="/customer/dashboard">
+          Customer Dashboard
+        </Link>
+      </li>
+
+      <li>
+        <Link to="/book-service">
+          Book Service
+        </Link>
+      </li>
+
+      <li>
+        <Link to="/bookings">
+          My Bookings
+        </Link>
+      </li>
+
+      {/* ===== PROVIDER OPTIONS ===== */}
+      <li className="submenu-title">
+        Provider
+      </li>
+
+      <li>
+        <Link to="/provider/dashboard">
+          Provider Dashboard
+        </Link>
+      </li>
+
+      <li>
+        <Link to="/provider/profile">
+          My Provider Profile
+        </Link>
+      </li>
+
+      <li>
+        <Link to="/provider/profile/edit">
+          Edit Provider Profile
+        </Link>
+      </li>
+
+      <li>
+        <Link to="/provider/jobs">
+          Provider Jobs
+        </Link>
+      </li>
+
+      <li>
+        <Link to="/provider/reviews">
+          Reviews & Ratings
+        </Link>
+      </li>
+
+      {/* ===== GENERAL ACCOUNT ===== */}
+      <li className="submenu-title">
+        General
+      </li>
+
+      <li>
+        <Link to="/wallet">
+          Wallet
+        </Link>
+      </li>
+
+      <li>
+        <Link to="/notifications">
+          Notifications
+        </Link>
+      </li>
+
+      <li>
+        <Link to="/preferences">
+          Preferences
+        </Link>
+      </li>
+
+      <li>
+        <Link to="/privacy-security">
+          Privacy & Security
+        </Link>
+      </li>
+
+      <li>
+        <Link to="/support">
+          Help & Support
+        </Link>
+      </li>
+
+    </ul>
+  )}
+</li>
         {/* ================= PROVIDER ================= */}
         <li>
           <button onClick={() => toggleMenu("provider")}>
