@@ -11,241 +11,409 @@ import {
   AiOutlineMessage,
   AiOutlineDashboard,
   AiOutlineTeam,
+  AiOutlineWallet,
+  AiOutlineBell,
+  AiOutlineBook,
+  AiOutlineSetting,
+  AiOutlineMenu,
+  AiOutlineClose,
 } from "react-icons/ai";
 
 function Sidebar() {
   const [activeMenu, setActiveMenu] = useState("");
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   const location = useLocation();
 
   const toggleMenu = (menu) => {
     setActiveMenu(activeMenu === menu ? "" : menu);
   };
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
 
   return (
-    <div className="sidebar">
+    <>
+      {/* MOBILE TOGGLE */}
+      <button
+        className="mobile-toggle"
+        onClick={() => setMobileOpen(!mobileOpen)}
+      >
+        {mobileOpen ? <AiOutlineClose /> : <AiOutlineMenu />}
+      </button>
 
-      {/* ================= LOGO ================= */}
-      <h2 className="logo">HomiCare</h2>
+      <div className={`sidebar ${mobileOpen ? "show" : ""}`}>
 
-      <ul className="menu-list">
+        {/* LOGO */}
+        <div className="logo-section">
+          <h2 className="logo">HomiCare</h2>
 
-        {/* ================= HOME ================= */}
-        <li className={isActive("/") ? "active" : ""}>
-          <Link to="/">
-            <AiOutlineHome /> Home
-          </Link>
-        </li>
+          <p className="logo-subtitle">
+            Home Services Marketplace
+          </p>
+        </div>
 
-        {/* ================= CATEGORIES ================= */}
-        <li>
-          <button onClick={() => toggleMenu("categories")}>
-            <AiOutlineAppstore /> Categories
-          </button>
+        {/* PROFILE CARD */}
+        <div className="sidebar-profile-card">
+          <img
+            src="https://i.pravatar.cc/100"
+            alt="profile"
+          />
 
-          {activeMenu === "categories" && (
-            <ul className="submenu">
-              <li><Link to="/categories/cleaning">Cleaning</Link></li>
-              <li><Link to="/categories/plumbing">Plumbing</Link></li>
-              <li><Link to="/categories/electrical">Electrical</Link></li>
-              <li><Link to="/categories/laundry">Laundry</Link></li>
-              <li><Link to="/categories/babysitting">Babysitting</Link></li>
-            </ul>
-          )}
-        </li>
+          <div className="info">
+            <h4>Welcome Back</h4>
+            <p>Customer Account</p>
+          </div>
 
-  {/* ================= MY ACCOUNT ================= */}
-<li className="menu-item">
+          <div className="stats">
+            <span>12 Jobs</span>
+            <span>4.9 ★</span>
+          </div>
 
-  <button
-    className="menu-btn"
-    onClick={() => toggleMenu("account")}
-  >
-    <span>
-      <AiOutlineUser /> My Account
-    </span>
+          <div className="actions">
+            <Link to="/profile">
+              <button>Profile</button>
+            </Link>
 
-    <span>
-      {activeMenu === "account" ? "−" : "+"}
-    </span>
-  </button>
+            <Link to="/profile/edit">
+              <button>Edit</button>
+            </Link>
+          </div>
+        </div>
 
-  {activeMenu === "account" && (
-    <ul className="submenu">
+        {/* MENU */}
+        <ul className="menu-list">
 
-      {/* ===== CUSTOMER OPTIONS ===== */}
-      <li className="submenu-title">
-        Customer
-      </li>
+          {/* HOME */}
+          <li className={isActive("/") ? "active" : ""}>
+            <Link to="/">
+              <AiOutlineHome />
+              Home
+            </Link>
+          </li>
 
-      <li>
-        <Link to="/customer/dashboard">
-          Customer Dashboard
-        </Link>
-      </li>
+          {/* SERVICES */}
+          <li className={isActive("/services") ? "active" : ""}>
+            <Link to="/services">
+              <AiOutlineAppstore />
+              Services
+            </Link>
+          </li>
 
-      <li>
-        <Link to="/book-service">
-          Book Service
-        </Link>
-      </li>
+          {/* CATEGORIES */}
+          <li>
+            <button onClick={() => toggleMenu("categories")}>
+              <span>
+                <AiOutlineAppstore />
+                Categories
+              </span>
 
-      <li>
-        <Link to="/bookings">
-          My Bookings
-        </Link>
-      </li>
+              <span>
+                {activeMenu === "categories" ? "−" : "+"}
+              </span>
+            </button>
 
-      {/* ===== PROVIDER OPTIONS ===== */}
-      <li className="submenu-title">
-        Provider
-      </li>
+            {activeMenu === "categories" && (
+              <ul className="submenu">
+                <li>
+                  <Link to="/provider/cleaning">Cleaning</Link>
+                </li>
 
-      <li>
-        <Link to="/provider/dashboard">
-          Provider Dashboard
-        </Link>
-      </li>
+                <li>
+                  <Link to="/provider/plumbing">Plumbing</Link>
+                </li>
 
-      <li>
-        <Link to="/provider/profile">
-          My Provider Profile
-        </Link>
-      </li>
+                <li>
+                  <Link to="/provider/electrical">Electrical</Link>
+                </li>
 
-      <li>
-        <Link to="/provider/profile/edit">
-          Edit Provider Profile
-        </Link>
-      </li>
+                <li>
+                  <Link to="/provider/laundry">Laundry</Link>
+                </li>
 
-      <li>
-        <Link to="/provider/jobs">
-          Provider Jobs
-        </Link>
-      </li>
+                <li>
+                  <Link to="/provider/babysitting">Babysitting</Link>
+                </li>
+              </ul>
+            )}
+          </li>
 
-      <li>
-        <Link to="/provider/reviews">
-          Reviews & Ratings
-        </Link>
-      </li>
+          {/* ACCOUNT */}
+          <li>
+            <button onClick={() => toggleMenu("account")}>
+              <span>
+                <AiOutlineUser />
+                My Account
+              </span>
 
-      {/* ===== GENERAL ACCOUNT ===== */}
-      <li className="submenu-title">
-        General
-      </li>
+              <span>
+                {activeMenu === "account" ? "−" : "+"}
+              </span>
+            </button>
 
-      <li>
-        <Link to="/wallet">
-          Wallet
-        </Link>
-      </li>
+            {activeMenu === "account" && (
+              <ul className="submenu">
 
-      <li>
-        <Link to="/notifications">
-          Notifications
-        </Link>
-      </li>
+                <li className="submenu-title">
+                  CUSTOMER
+                </li>
 
-      <li>
-        <Link to="/preferences">
-          Preferences
-        </Link>
-      </li>
+                <li>
+                  <Link to="/profile">
+                    <AiOutlineDashboard />
+                    Dashboard
+                  </Link>
+                </li>
 
-      <li>
-        <Link to="/privacy-security">
-          Privacy & Security
-        </Link>
-      </li>
+                <li>
+                  <Link to="/bookings">
+                    <AiOutlineBook />
+                    My Bookings
+                  </Link>
+                </li>
 
-      <li>
-        <Link to="/support">
-          Help & Support
-        </Link>
-      </li>
+                <li>
+                  <Link to="/wallet">
+                    <AiOutlineWallet />
+                    Wallet
+                  </Link>
+                </li>
 
-    </ul>
-  )}
-</li>
-        {/* ================= PROVIDER ================= */}
-        <li>
-          <button onClick={() => toggleMenu("provider")}>
-            <AiOutlineDashboard /> Provider Dashboard
-          </button>
+                <li>
+                  <Link to="/messages">
+                    <AiOutlineMessage />
+                    Messages
+                  </Link>
+                </li>
 
-          {activeMenu === "provider" && (
-            <ul className="submenu">
-              <li><Link to="/provider/dashboard">Dashboard</Link></li>
-              <li><Link to="/provider/profile">Provider Profile</Link></li>
-              <li><Link to="/provider/profile/edit">Edit Profile</Link></li>
-              <li><Link to="/provider/jobs">Jobs</Link></li>
-              <li><Link to="/provider/earnings">Earnings</Link></li>
-              <li><Link to="/provider/reviews">Reviews</Link></li>
-            </ul>
-          )}
-        </li>
+                <li className="submenu-title">
+                  SETTINGS
+                </li>
 
-        {/* ================= ADMIN ================= */}
-        <li>
-          <button onClick={() => toggleMenu("admin")}>
-            <AiOutlineTeam /> Admin Panel
-          </button>
+                <li>
+                  <Link to="/profile/edit">
+                    <AiOutlineUser />
+                    Edit Profile
+                  </Link>
+                </li>
 
-          {activeMenu === "admin" && (
-            <ul className="submenu">
-              <li><Link to="/admin/dashboard">Dashboard</Link></li>
-              <li><Link to="/admin/users">Users</Link></li>
-              <li><Link to="/admin/providers">Providers</Link></li>
-              <li><Link to="/admin/bookings">Bookings</Link></li>
-              <li><Link to="/admin/analytics">Analytics</Link></li>
-            </ul>
-          )}
-        </li>
+                <li>
+                  <Link to="/profile/notifications">
+                    <AiOutlineBell />
+                    Notifications
+                  </Link>
+                </li>
 
-        {/* ================= CHAT ================= */}
-        <li className={isActive("/messages") ? "active" : ""}>
-          <Link to="/messages">
-            <AiOutlineMessage /> Chat
-          </Link>
-        </li>
+                <li>
+                  <Link to="/profile/preferences">
+                    <AiOutlineSetting />
+                    Preferences
+                  </Link>
+                </li>
 
-        {/* ================= TOOLS ================= */}
-        <li>
-          <button onClick={() => toggleMenu("tools")}>
-            <AiOutlineTool /> Tools
-          </button>
+                <li>
+                  <Link to="/profile/security">
+                    <AiOutlineSetting />
+                    Security
+                  </Link>
+                </li>
+              </ul>
+            )}
+          </li>
 
-          {activeMenu === "tools" && (
-            <ul className="submenu">
-              <li><Link to="/tools/wallet-topup">Wallet Top-up</Link></li>
-              <li><Link to="/tools/help">Help Center</Link></li>
-              <li><Link to="/tools/ai">AI Assistant</Link></li>
-            </ul>
-          )}
-        </li>
+          {/* PROVIDER */}
+          <li>
+            <button onClick={() => toggleMenu("provider")}>
+              <span>
+                <AiOutlineDashboard />
+                Provider
+              </span>
 
-        {/* ================= SUPPORT ================= */}
-        <li>
-          <button onClick={() => toggleMenu("support")}>
-            <AiOutlineCustomerService /> Support
-          </button>
+              <span>
+                {activeMenu === "provider" ? "−" : "+"}
+              </span>
+            </button>
 
-          {activeMenu === "support" && (
-            <ul className="submenu">
-              <li><Link to="/support">Support Home</Link></li>
-              <li><Link to="/support/help">Help Center</Link></li>
-              <li><Link to="/support/contact">Contact</Link></li>
-              <li><Link to="/support/tickets">Tickets</Link></li>
-              <li><Link to="/support/ai">AI Support</Link></li>
-            </ul>
-          )}
-        </li>
+            {activeMenu === "provider" && (
+              <ul className="submenu">
 
-      </ul>
-    </div>
+                <li>
+                  <Link to="/provider/dashboard">
+                    Dashboard
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/provider/profile">
+                    Provider Profile
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/provider/profile/edit">
+                    Edit Profile
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/provider/jobs">
+                    Jobs
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/provider/earnings">
+                    Earnings
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/provider/reviews">
+                    Reviews
+                  </Link>
+                </li>
+              </ul>
+            )}
+          </li>
+
+          {/* ADMIN */}
+          <li>
+            <button onClick={() => toggleMenu("admin")}>
+              <span>
+                <AiOutlineTeam />
+                Admin
+              </span>
+
+              <span>
+                {activeMenu === "admin" ? "−" : "+"}
+              </span>
+            </button>
+
+            {activeMenu === "admin" && (
+              <ul className="submenu">
+                <li>
+                  <Link to="/admin/dashboard">
+                    Dashboard
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/admin/users">
+                    Users
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/admin/providers">
+                    Providers
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/admin/bookings">
+                    Bookings
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/admin/analytics">
+                    Analytics
+                  </Link>
+                </li>
+              </ul>
+            )}
+          </li>
+
+          {/* TOOLS */}
+          <li>
+            <button onClick={() => toggleMenu("tools")}>
+              <span>
+                <AiOutlineTool />
+                Tools
+              </span>
+
+              <span>
+                {activeMenu === "tools" ? "−" : "+"}
+              </span>
+            </button>
+
+            {activeMenu === "tools" && (
+              <ul className="submenu">
+                <li>
+                  <Link to="/tools/wallet-topup">
+                    Wallet Top-up
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/tools/help">
+                    Help Center
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/support/ai">
+                    AI Assistant
+                  </Link>
+                </li>
+              </ul>
+            )}
+          </li>
+
+          {/* SUPPORT */}
+          <li>
+            <button onClick={() => toggleMenu("support")}>
+              <span>
+                <AiOutlineCustomerService />
+                Support
+              </span>
+
+              <span>
+                {activeMenu === "support" ? "−" : "+"}
+              </span>
+            </button>
+
+            {activeMenu === "support" && (
+              <ul className="submenu">
+                <li>
+                  <Link to="/support">
+                    Support Home
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/support/help">
+                    Help Center
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/support/contact">
+                    Contact Support
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/support/tickets">
+                    Tickets
+                  </Link>
+                </li>
+              </ul>
+            )}
+          </li>
+
+          {/* CHAT */}
+          <li className={isActive("/messages") ? "active" : ""}>
+            <Link to="/messages">
+              <AiOutlineMessage />
+              Chat
+            </Link>
+          </li>
+
+        </ul>
+      </div>
+    </>
   );
 }
 
