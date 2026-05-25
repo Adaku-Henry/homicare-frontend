@@ -1,5 +1,12 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
+
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -85,7 +92,19 @@ import Bookings from "./admin/pages/Bookings";
 import Analytics from "./admin/pages/Analytics";
 import RealTimeDashboard from "./admin/pages/RealTimeDashboard";
 
-// ================= NOT FOUND =================
+// ================= SIMPLE PLACEHOLDER PAGES =================
+const SettingsPage = () => (
+  <div style={{ padding: 20 }}>
+    <h2>Settings Page</h2>
+  </div>
+);
+
+const AccountOverview = () => (
+  <div style={{ padding: 20 }}>
+    <h2>Account Overview</h2>
+  </div>
+);
+
 const NotFound = () => (
   <div style={{ textAlign: "center", marginTop: 50 }}>
     <h2>404 - Page Not Found</h2>
@@ -94,49 +113,65 @@ const NotFound = () => (
 
 // ================= PROTECTED ROUTE =================
 const ProtectedRoute = ({ user, children }) => {
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
   return children;
 };
 
 // ================= MAIN LAYOUT =================
 const MainLayout = () => {
   return (
-    <div style={{ display: "flex" }}>
-      <Sidebar />
+    <div className="app-layout">
 
-      <div style={{ flex: 1 }}>
+      {/* SIDEBAR */}
+      <div className="desktop-sidebar">
+        <Sidebar />
+      </div>
+
+      {/* MAIN CONTENT */}
+      <div className="main-content">
+
         <Navbar />
 
-        <div style={{ padding: 20 }}>
+        <div className="page-content">
           <Outlet />
         </div>
 
         <FooterNav />
+
       </div>
     </div>
   );
 };
 
-// ================= APP WRAPPER =================
+// ================= APP =================
 function AppWrapper() {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div style={{ textAlign: "center" }}>Loading HomiCare...</div>;
+    return (
+      <div style={{ textAlign: "center", marginTop: 100 }}>
+        Loading HomiCare...
+      </div>
+    );
   }
 
   return (
     <BrowserRouter>
-      <ToastContainer />
+
+      <ToastContainer position="top-right" autoClose={3000} />
 
       <Routes>
 
-        {/* ================= PUBLIC ================= */}
+        {/* ================= PUBLIC ROUTES ================= */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
 
-        {/* ================= PROTECTED ================= */}
+        {/* ================= PROTECTED APP ================= */}
         <Route
           path="/"
           element={
@@ -146,80 +181,146 @@ function AppWrapper() {
           }
         >
 
-          {/* CORE */}
+          {/* ================= HOME ================= */}
           <Route index element={<Home />} />
           <Route path="services" element={<ServicesPage />} />
 
-          {/* PROFILE */}
+          {/* ================= PROFILE ================= */}
           <Route path="profile" element={<ProfileDashboard />} />
           <Route path="profile/edit" element={<EditProfilePage />} />
           <Route path="profile/address" element={<AddressManager />} />
           <Route path="profile/security" element={<SecuritySettings />} />
-          <Route path="profile/notifications" element={<NotificationSettings />} />
-          <Route path="profile/preferences" element={<Preferences />} />
+          <Route
+            path="profile/notifications"
+            element={<NotificationSettings />}
+          />
+          <Route
+            path="profile/preferences"
+            element={<Preferences />}
+          />
 
-          {/* PROVIDERS */}
+          {/* ================= ACCOUNT ================= */}
+          <Route path="account" element={<AccountOverview />} />
+          <Route path="account/inbox" element={<InboxPage />} />
+          <Route path="account/orders" element={<OrdersPage />} />
+          <Route path="account/ratings" element={<RatingsPage />} />
+          <Route path="account/settings" element={<SettingsPage />} />
+
+          {/* ================= PROVIDERS ================= */}
           <Route path="providers" element={<ProvidersList />} />
           <Route path="providers/:id" element={<ProviderProfileView />} />
           <Route path="provider/:categoryName" element={<ProviderPage />} />
           <Route path="provider-register" element={<ProviderRegister />} />
 
-          {/* PROVIDER DASHBOARD */}
+          {/* ================= PROVIDER DASHBOARD ================= */}
           <Route path="provider" element={<ProviderLayout />}>
+
+            <Route
+              index
+              element={<Navigate to="dashboard" replace />}
+            />
+
             <Route path="dashboard" element={<ProviderDashboard />} />
+
             <Route path="profile" element={<ProviderProfile />} />
-            <Route path="profile/edit" element={<ProviderEditProfile />} />
+
+            <Route
+              path="profile/edit"
+              element={<ProviderEditProfile />}
+            />
+
             <Route path="jobs" element={<ProviderJobs />} />
-            <Route path="earnings" element={<ProviderEarnings />} />
-            <Route path="reviews" element={<ProviderReviews />} />
+
+            <Route
+              path="earnings"
+              element={<ProviderEarnings />}
+            />
+
+            <Route
+              path="reviews"
+              element={<ProviderReviews />}
+            />
+
           </Route>
 
-          {/* BOOKINGS */}
+          {/* ================= BOOKINGS ================= */}
           <Route path="bookings" element={<MyBookings />} />
-          <Route path="bookings/schedule" element={<ScheduleBooking />} />
-          <Route path="bookings/messages" element={<Messages />} />
-          <Route path="book/:id" element={<BookAppointment />} />
-          <Route path="booking-confirmation" element={<BookingConfirmation />} />
 
-          {/* CHAT */}
+          <Route
+            path="bookings/schedule"
+            element={<ScheduleBooking />}
+          />
+
+          <Route
+            path="bookings/messages"
+            element={<Messages />}
+          />
+
+          <Route path="book/:id" element={<BookAppointment />} />
+
+          <Route
+            path="booking-confirmation"
+            element={<BookingConfirmation />}
+          />
+
+          {/* ================= CHAT ================= */}
           <Route path="messages" element={<ChatPage />} />
 
-          {/* WALLET */}
+          {/* ================= WALLET ================= */}
           <Route path="wallet" element={<Wallet />} />
 
-          {/* ACCOUNT */}
-          <Route path="account/inbox" element={<InboxPage />} />
-          <Route path="account/orders" element={<OrdersPage />} />
-          <Route path="account/ratings" element={<RatingsPage />} />
+          {/* ================= TOOLS ================= */}
+          <Route
+            path="tools/wallet-topup"
+            element={<WalletTopupPage />}
+          />
 
-          {/* TOOLS */}
-          <Route path="tools/wallet-topup" element={<WalletTopupPage />} />
           <Route path="tools/help" element={<HelpPage />} />
 
-          {/* SUPPORT */}
+          {/* ================= SUPPORT ================= */}
           <Route path="support" element={<SupportHome />} />
-          <Route path="support/help" element={<HelpCenter />} />
-          <Route path="support/contact" element={<ContactSupport />} />
-          <Route path="support/ai" element={<AIAssistantPage />} />
-          <Route path="support/tickets" element={<SupportTickets />} />
 
-          {/* TRACKING */}
+          <Route path="support/help" element={<HelpCenter />} />
+
+          <Route
+            path="support/contact"
+            element={<ContactSupport />}
+          />
+
+          <Route
+            path="support/ai"
+            element={<AIAssistantPage />}
+          />
+
+          <Route
+            path="support/tickets"
+            element={<SupportTickets />}
+          />
+
+          {/* ================= TRACKING ================= */}
           <Route path="tracking" element={<TrackingPage />} />
 
-          {/* ADMIN */}
+          {/* ================= ADMIN ================= */}
           <Route path="admin" element={<AdminLayout />}>
+
             <Route path="dashboard" element={<AdminDashboard />} />
+
             <Route path="users" element={<Users />} />
+
             <Route path="providers" element={<Providers />} />
+
             <Route path="bookings" element={<Bookings />} />
+
             <Route path="analytics" element={<Analytics />} />
-            <Route path="realtime" element={<RealTimeDashboard />} />
+
+            <Route
+              path="realtime"
+              element={<RealTimeDashboard />}
+            />
+
           </Route>
 
-          {/* UNAUTHORIZED */}
-          <Route path="unauthorized" element={<Unauthorized />} />
-
-          {/* ❗ FIXED: proper 404 instead of redirect loop */}
+          {/* ================= 404 ================= */}
           <Route path="*" element={<NotFound />} />
 
         </Route>
