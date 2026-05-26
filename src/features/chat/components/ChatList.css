@@ -1,5 +1,5 @@
 /* =========================
-   GLOBAL RESET (SAFE)
+   GLOBAL RESET
 ========================= */
 
 * {
@@ -12,56 +12,53 @@ html,
 body {
   width: 100%;
   height: 100%;
-  font-family: Arial, sans-serif;
-
-  /* IMPORTANT: allow controlled scrolling */
   overflow: hidden;
+  font-family: Arial, sans-serif;
 }
 
 /* =========================
-   MAIN WRAPPER
+   MAIN CHAT WRAPPER
 ========================= */
 
 .chatWrapper {
   display: flex;
   flex-direction: column;
-  height: 100dvh;
   width: 100%;
-
+  height: 100dvh;
   background: #e5ddd5;
-
   position: relative;
-
-  /* CRITICAL: prevents layout overflow */
   overflow: hidden;
 }
 
 /* =========================
-   HEADER (FIXED UX)
+   HEADER
 ========================= */
 
 .chatHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   padding: 14px 16px;
-  min-height: 60px;
-
   background: #075e54;
   color: white;
+  min-height: 65px;
 
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: 100;
 
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.chatHeaderLeft {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .chatUser {
   font-size: 16px;
   font-weight: 600;
-
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -69,17 +66,24 @@ body {
 
 .status {
   font-size: 12px;
-  opacity: 0.8;
+  opacity: 0.85;
+}
+
+.menuBtn {
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px 8px;
 }
 
 /* =========================
-   CHAT BODY (CORE UX FIX)
+   CHAT BODY
 ========================= */
 
 .chatBody {
   flex: 1;
-
-  /* ONLY SCROLL AREA */
   overflow-y: auto;
   overflow-x: hidden;
 
@@ -89,62 +93,78 @@ body {
   gap: 10px;
 
   scroll-behavior: smooth;
-
-  /* prevents input overlap issues */
-  padding-bottom: 90px;
 }
 
-/* better scrollbar UX */
+/* custom scrollbar */
+
 .chatBody::-webkit-scrollbar {
-  width: 5px;
+  width: 6px;
 }
 
 .chatBody::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.25);
+  background: rgba(0, 0, 0, 0.2);
   border-radius: 10px;
 }
 
 /* =========================
-   MESSAGE BUBBLES (CLEAN UX)
+   MESSAGE BUBBLES
 ========================= */
 
 .msg {
-  max-width: 78%;
+  max-width: 75%;
   padding: 10px 14px;
-  border-radius: 16px;
+  border-radius: 14px;
 
   font-size: 14px;
   line-height: 1.4;
 
-  word-break: break-word;
-
   display: flex;
   flex-direction: column;
 
-  animation: fadeIn 0.15s ease;
+  word-break: break-word;
+  overflow-wrap: break-word;
+
+  position: relative;
+
+  animation: fadeIn 0.2s ease;
 }
 
 .msg.other {
+  background: white;
   align-self: flex-start;
-  background: #ffffff;
   border-top-left-radius: 4px;
+
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 .msg.me {
-  align-self: flex-end;
   background: #dcf8c6;
+  align-self: flex-end;
   border-top-right-radius: 4px;
+
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 .msgMeta {
-  font-size: 10px;
-  opacity: 0.6;
-  margin-top: 5px;
+  margin-top: 6px;
+  font-size: 11px;
+  opacity: 0.65;
   text-align: right;
 }
 
 /* =========================
-   INPUT BAR (CRITICAL UX FIX)
+   TYPING INDICATOR
+========================= */
+
+.typing {
+  padding: 6px 12px;
+  font-size: 13px;
+  color: #666;
+  font-style: italic;
+}
+
+/* =========================
+   INPUT BAR
 ========================= */
 
 .chatInputBar {
@@ -152,32 +172,29 @@ body {
   align-items: center;
   gap: 10px;
 
-  padding: 10px 12px;
+  padding: 10px 14px;
 
   background: #f0f0f0;
-
-  border-top: 1px solid rgba(0,0,0,0.1);
+  border-top: 1px solid #ddd;
 
   position: sticky;
   bottom: 0;
-
-  z-index: 60;
-
-  /* safe mobile bottom spacing */
-  padding-bottom: calc(10px + env(safe-area-inset-bottom));
+  z-index: 50;
 }
 
 .chatInput {
   flex: 1;
   min-width: 0;
 
-  padding: 12px 14px;
+  padding: 12px 16px;
 
   border-radius: 25px;
   border: 1px solid #ccc;
 
   outline: none;
   font-size: 14px;
+
+  background: white;
 }
 
 .chatInput:focus {
@@ -185,37 +202,46 @@ body {
 }
 
 .sendBtn {
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
 
-  border-radius: 50%;
   border: none;
+  border-radius: 50%;
 
   background: #075e54;
   color: white;
+
+  cursor: pointer;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  cursor: pointer;
+  font-size: 18px;
+
+  transition: 0.2s ease;
+}
+
+.sendBtn:hover {
+  transform: scale(1.05);
 }
 
 /* =========================
-   DRAWER (FIXED PRO UX)
+   DRAWER / SIDEBAR
 ========================= */
 
 .drawerOverlay {
   position: fixed;
   inset: 0;
 
-  background: rgba(0,0,0,0.4);
+  background: rgba(0, 0, 0, 0.4);
 
   opacity: 0;
   visibility: hidden;
 
-  transition: 0.25s ease;
-  z-index: 90;
+  transition: 0.3s ease;
+
+  z-index: 199;
 }
 
 .drawerOverlay.show {
@@ -223,43 +249,87 @@ body {
   visibility: visible;
 }
 
-/* IMPORTANT: use transform instead of right */
 .drawer {
   position: fixed;
   top: 0;
-  right: 0;
+  right: -380px;
 
   width: 360px;
   max-width: 100%;
+
   height: 100dvh;
 
-  background: #fff;
+  background: white;
 
-  transform: translateX(100%);
-  transition: transform 0.25s ease;
-
-  z-index: 100;
+  z-index: 200;
 
   display: flex;
   flex-direction: column;
 
-  box-shadow: -4px 0 14px rgba(0,0,0,0.2);
+  transition: right 0.3s ease;
+
+  box-shadow: -3px 0 12px rgba(0, 0, 0, 0.2);
+
+  overflow: hidden;
 }
 
 .drawer.open {
-  transform: translateX(0);
+  right: 0;
 }
 
-/* drawer scroll fix */
+.drawerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 16px;
+
+  background: #075e54;
+  color: white;
+
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.drawerHeader h3 {
+  font-size: 18px;
+}
+
+.drawerHeader button {
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+}
+
 .drawerContent {
   flex: 1;
   overflow-y: auto;
   padding: 14px;
 }
 
+.drawer input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+
+  border-radius: 8px;
+  border: 1px solid #ddd;
+
+  outline: none;
+}
+
 /* =========================
    CONTACT LIST
 ========================= */
+
+.contactList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
 .contactCard {
   display: flex;
@@ -267,11 +337,13 @@ body {
   align-items: center;
 
   padding: 12px;
+
   border-radius: 10px;
 
   background: #f7f7f7;
 
   cursor: pointer;
+
   transition: 0.2s ease;
 }
 
@@ -279,17 +351,52 @@ body {
   background: #ececec;
 }
 
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.contactName {
+  font-weight: 600;
+}
+
+.contactStatus {
+  font-size: 12px;
+  color: #666;
+}
+
+.onlineDot,
+.offlineDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.onlineDot {
+  background: #25d366;
+}
+
+.offlineDot {
+  background: #999;
+}
+
 /* =========================
    EMPTY STATE
 ========================= */
 
 .emptyChat {
-  flex: 1;
+  width: 100%;
+  height: 100dvh;
+
   display: flex;
   justify-content: center;
   align-items: center;
 
   color: #777;
+  font-size: 16px;
+
+  background: #f5f5f5;
 }
 
 /* =========================
@@ -299,8 +406,9 @@ body {
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(5px);
+    transform: translateY(6px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -308,22 +416,99 @@ body {
 }
 
 /* =========================
-   MOBILE OPTIMIZED UX
+   TABLET
+========================= */
+
+@media (max-width: 992px) {
+  .msg {
+    max-width: 82%;
+  }
+
+  .drawer {
+    width: 320px;
+  }
+}
+
+/* =========================
+   MOBILE
 ========================= */
 
 @media (max-width: 768px) {
+  .chatWrapper {
+    width: 100%;
+    height: 100dvh;
+  }
+
+  .chatHeader {
+    padding: 12px;
+  }
+
+  .chatUser {
+    font-size: 15px;
+  }
+
   .chatBody {
     padding: 10px;
     gap: 8px;
-    padding-bottom: 100px;
   }
 
   .msg {
     max-width: 88%;
     font-size: 13px;
+    padding: 10px 12px;
+  }
+
+  .chatInputBar {
+    padding: 10px;
+    padding-bottom: calc(
+      10px + env(safe-area-inset-bottom)
+    );
+  }
+
+  .chatInput {
+    font-size: 13px;
+    padding: 10px 14px;
+  }
+
+  .sendBtn {
+    width: 42px;
+    height: 42px;
+    font-size: 16px;
   }
 
   .drawer {
     width: 100%;
+    right: -100%;
+  }
+
+  .drawer.open {
+    right: 0;
+  }
+}
+
+/* =========================
+   SMALL MOBILE
+========================= */
+
+@media (max-width: 480px) {
+  .chatHeader {
+    min-height: 58px;
+  }
+
+  .chatUser {
+    font-size: 14px;
+  }
+
+  .status {
+    font-size: 11px;
+  }
+
+  .msg {
+    max-width: 92%;
+    font-size: 12px;
+  }
+
+  .chatInput {
+    font-size: 12px;
   }
 }
