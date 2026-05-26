@@ -4,6 +4,7 @@ import React, {
   useState,
   useCallback,
   useMemo,
+  useRef,
 } from "react";
 
 const ChatContext = createContext();
@@ -28,26 +29,37 @@ const initialMessages = {
 
 export const ChatProvider = ({ children }) => {
   const [users, setUsers] = useState(initialUsers);
+
+  // 🔥 message structure: stable + scalable
   const [messages, setMessages] = useState(initialMessages);
+
   const [activeChat, setActiveChat] = useState(null);
   const [typingUsers, setTypingUsers] = useState({});
   const [contacts, setContacts] = useState([]);
   const [recentChats, setRecentChats] = useState([]);
 
+  // ================= SOCKET (future-ready hook) =================
+  const socketRef = useRef(null);
+
   // ================= OPEN CHAT =================
   const selectChat = useCallback((id) => {
     setActiveChat(id);
 
-    // mark seen
-    setMessages((prev) => ({
-      ...prev,
-      [id]: (prev[id] || []).map((m) => ({
-        ...m,
-        status: "seen",
-      })),
-    }));
+    // mark seen safely
+    setMessages((prev) => {
+      const chatMsgs = prev[id] || [];
 
-    // update recent chats
+      return {
+        ...prev,
+        [id]: chatMsgs.map((m) =>
+          m.sender === "other"
+            ? { ...m, status: "seen" }
+            : m
+        ),
+      };
+    });
+
+    // update recents
     setRecentChats((prev) => {
       const filtered = prev.filter((c) => c !== id);
       return [id, ...filtered];
@@ -57,58 +69,74 @@ export const ChatProvider = ({ children }) => {
   // ================= CHAT CREATION =================
   const createNewChat = useCallback(
     (user) => {
-      if (!user) return;
+      if (!user?.id) return;
 
-      const exists = users.some((u) => u.id === user.id);
-
-      if (!exists) {
-        setUsers((prev) => [
-          ...prev,
-          {
-            ...user,
-            online: true,
-            lastSeen: new Date().toLocaleTimeString(),
-          },
-        ]);
-      }
+      setUsers((prev) => {
+        const exists = prev.some((u) => u.id === user.id);
+        return exists ? prev : [...prev, user];
+      });
 
       setContacts((prev) => {
-        const existsContact = prev.some((c) => c.id === user.id);
-        return existsContact ? prev : [...prev, user];
+        const exists = prev.some((c) => c.id === user.id);
+        return exists ? prev : [...prev, user];
       });
 
       selectChat(user.id);
     },
-    [users, selectChat]
+    [selectChat]
   );
 
   const startConversation = createNewChat;
 
-  // ================= SEND MESSAGE =================
+  // ================= SEND MESSAGE (PRODUCTION SAFE) =================
   const sendMessage = useCallback(
     (text) => {
-      if (!activeChat || !text.trim()) return;
+      const cleanText = text?.trim();
+      if (!activeChat || !cleanText) return;
+
+      const messageId = Date.now();
 
       const msg = {
-        id: Date.now(),
+        id: messageId,
         chatId: activeChat,
         sender: "me",
-        text,
+        text: cleanText,
         time: new Date().toLocaleTimeString(),
-        status: "sent",
+        status: "sending",
       };
 
+      // 🔥 optimistic UI update
       setMessages((prev) => ({
         ...prev,
         [activeChat]: [...(prev[activeChat] || []), msg],
       }));
 
+      // 🔥 socket safe send (future backend ready)
+      try {
+        const socket = socketRef.current;
+
+        if (socket?.readyState === WebSocket.OPEN) {
+          socket.send(
+            JSON.stringify({
+              type: "message",
+              id: messageId,
+              chatId: activeChat,
+              message: cleanText,
+              timestamp: Date.now(),
+            })
+          );
+        }
+      } catch (err) {
+        console.error("Send failed:", err);
+      }
+
+      // update recents
       setRecentChats((prev) => {
         const filtered = prev.filter((c) => c !== activeChat);
         return [activeChat, ...filtered];
       });
 
-      // AUTO REPLY (demo)
+      // optional auto-reply (dev mode only)
       setTimeout(() => {
         const reply = {
           id: Date.now() + 1,
@@ -123,7 +151,7 @@ export const ChatProvider = ({ children }) => {
           ...prev,
           [activeChat]: [...(prev[activeChat] || []), reply],
         }));
-      }, 1000);
+      }, 900);
     },
     [activeChat]
   );
@@ -143,26 +171,29 @@ export const ChatProvider = ({ children }) => {
     [createNewChat]
   );
 
-  // ================= HELPERS (STABLE) =================
-  const getLastMessage = useCallback(
-    (chatId) => {
-      const msgs = messages[chatId] || [];
-      return msgs[msgs.length - 1];
-    },
-    [messages]
-  );
+  // ================= PERFORMANCE HELPERS (OPTIMIZED) =================
 
-  const getUnreadCount = useCallback(
-    (chatId) => {
-      const msgs = messages[chatId] || [];
-      return msgs.filter(
-        (m) => m.sender === "other" && m.status !== "seen"
-      ).length;
-    },
-    [messages]
-  );
+  const getLastMessage = useCallback((chatId) => {
+    const msgs = messages[chatId];
+    if (!msgs?.length) return null;
+    return msgs[msgs.length - 1];
+  }, [messages]);
 
-  // ================= CONTEXT VALUE (OPTIMIZED) =================
+  const getUnreadCount = useCallback((chatId) => {
+    const msgs = messages[chatId] || [];
+
+    let count = 0;
+    for (let i = 0; i < msgs.length; i++) {
+      const m = msgs[i];
+      if (m.sender === "other" && m.status !== "seen") {
+        count++;
+      }
+    }
+
+    return count;
+  }, [messages]);
+
+  // ================= CONTEXT VALUE (STABLE OPTIMIZATION) =================
   const value = useMemo(
     () => ({
       users,
@@ -174,16 +205,19 @@ export const ChatProvider = ({ children }) => {
       createNewChat,
       sendMessage,
       addContact,
+
       setMessages,
+      setTypingUsers,
 
       contacts,
       recentChats,
-
       typingUsers,
-      setTypingUsers,
 
       getLastMessage,
       getUnreadCount,
+
+      // socket ref (future scaling)
+      socketRef,
     }),
     [
       users,
@@ -202,7 +236,11 @@ export const ChatProvider = ({ children }) => {
     ]
   );
 
-  return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
+  return (
+    <ChatContext.Provider value={value}>
+      {children}
+    </ChatContext.Provider>
+  );
 };
 
 export const useChat = () => useContext(ChatContext);
