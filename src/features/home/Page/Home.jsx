@@ -20,42 +20,35 @@ function Home() {
     role: "guest",
   };
 
-  // ================= SEARCH =================
   const [search, setSearch] = useState("");
-
-  // ================= AI RECOMMENDATIONS =================
   const [recommendations, setRecommendations] = useState([]);
   const [loadingAI, setLoadingAI] = useState(false);
 
-  // ================= POSTS SYSTEM =================
   const [posts, setPosts] = useState([]);
   const [newPost, setNewPost] = useState("");
   const [commentInputs, setCommentInputs] = useState({});
-  const [feedFilter, setFeedFilter] = useState("all");
 
-  // ================= PROVIDERS (FIXED ESLINT DEPENDENCY) =================
-  const providers = useMemo(() => ([
-    { id: 1, name: "John Cleaner 🧹", service: "Cleaning", rating: 4.8, distance: "2km", online: true },
-    { id: 2, name: "Sarah Electrician ⚡", service: "Electrical", rating: 4.7, distance: "5km", online: false },
-    { id: 3, name: "Plumber Pro 🔧", service: "Plumbing", rating: 4.9, distance: "3km", online: true },
-    { id: 4, name: "Painter Max 🎨", service: "Painting", rating: 4.6, distance: "4km", online: true },
-  ]), []);
+  const providers = useMemo(
+    () => [
+      { id: 1, name: "John Cleaner 🧹", service: "Cleaning", rating: 4.8, distance: "2km", online: true, img: "https://images.unsplash.com/photo-1581578731548-c64695cc6952" },
+      { id: 2, name: "Sarah Electrician ⚡", service: "Electrical", rating: 4.7, distance: "5km", online: false, img: "https://images.unsplash.com/photo-1621905251189-08b45249d3c6" },
+      { id: 3, name: "Plumber Pro 🔧", service: "Plumbing", rating: 4.9, distance: "3km", online: true, img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c" },
+      { id: 4, name: "Painter Max 🎨", service: "Painting", rating: 4.6, distance: "4km", online: true, img: "https://images.unsplash.com/photo-1503387762-592deb58ef4e" },
+    ],
+    []
+  );
 
-  // ================= AI SYSTEM =================
   useEffect(() => {
     setLoadingAI(true);
 
     const timer = setTimeout(() => {
-      setRecommendations(
-        providers.filter((p) => p.rating >= 4.7).slice(0, 3)
-      );
+      setRecommendations(providers.filter((p) => p.rating >= 4.7));
       setLoadingAI(false);
-    }, 900);
+    }, 700);
 
     return () => clearTimeout(timer);
-  }, [providers]); // ✅ FIXED WARNING
+  }, [providers]);
 
-  // ================= NAV =================
   const handleSearch = () => {
     navigate("/services", { state: { query: search } });
   };
@@ -66,7 +59,6 @@ function Home() {
     });
   };
 
-  // ================= POSTS =================
   const addPost = () => {
     if (!newPost.trim()) return;
 
@@ -85,62 +77,56 @@ function Home() {
   };
 
   const likePost = (id) => {
-    setPosts(posts.map((p) =>
-      p.id === id ? { ...p, likes: p.likes + 1 } : p
-    ));
+    setPosts(posts.map((p) => (p.id === id ? { ...p, likes: p.likes + 1 } : p)));
   };
 
   const addComment = (postId) => {
     const text = commentInputs[postId];
     if (!text?.trim()) return;
 
-    setPosts(posts.map((p) =>
-      p.id === postId
-        ? {
-            ...p,
-            comments: [...p.comments, { text, user: currentUser.name }],
-          }
-        : p
-    ));
+    setPosts(
+      posts.map((p) =>
+        p.id === postId
+          ? { ...p, comments: [...p.comments, { text, user: currentUser.name }] }
+          : p
+      )
+    );
 
     setCommentInputs({ ...commentInputs, [postId]: "" });
   };
 
-  const filteredPosts =
-    feedFilter === "all"
-      ? posts
-      : posts.filter((p) => p.role === feedFilter);
+  const filteredPosts = posts;
 
   return (
     <div className="home-container">
 
-      <section className="section">
-        <HeroSection />
-      </section>
+      {/* HERO */}
+      <HeroSection />
 
-      <section className="section search-box">
+      {/* SEARCH */}
+      <div className="search-box">
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search cleaners, electricians, plumbers..."
+          placeholder="Search electricians, cleaners, plumbers..."
         />
         <button onClick={handleSearch}>Search</button>
-      </section>
+      </div>
 
+      {/* AI SECTION */}
       <section className="section">
-        <h2>🤖 Smart Recommendations</h2>
+        <h2>🤖 Smart Picks for You</h2>
 
         {loadingAI ? (
-          <p>Loading AI suggestions...</p>
+          <p>Loading AI...</p>
         ) : (
           <div className="grid">
             {recommendations.map((p) => (
-              <div key={p.id} className="card">
-                <div>
-                  <strong>{p.name}</strong>
-                  <p>{p.service}</p>
-                  <small>⭐ {p.rating} • 📍 {p.distance}</small>
-                </div>
+              <div key={p.id} className="card glass">
+                <img src={p.img} alt="" />
+                <h3>{p.name}</h3>
+                <p>{p.service}</p>
+                <small>⭐ {p.rating}</small>
                 <button onClick={() => bookProvider(p)}>Book</button>
               </div>
             ))}
@@ -148,134 +134,122 @@ function Home() {
         )}
       </section>
 
+      {/* TRENDING */}
       <section className="section">
-        <h2>🔥 Trending Services</h2>
+        <h2>🔥 Trending</h2>
+
         <div className="grid">
-          {["Cleaning", "Plumbing", "Electrical", "Laundry"].map((s, i) => (
+          {["Cleaning", "Electrical", "Plumbing", "Painting", "Laundry"].map((s, i) => (
             <div
               key={i}
               className="card"
               onClick={() => navigate("/services", { state: { service: s } })}
             >
-              <strong>{s}</strong>
+              <h3>{s}</h3>
             </div>
           ))}
         </div>
       </section>
 
+      {/* PROVIDERS */}
       <section className="section">
-        <h2>👷 Available Providers</h2>
+        <h2>👷 Providers</h2>
 
         <div className="grid">
           {providers.map((p) => (
-            <div key={p.id} className="card">
-              <div>
-                <strong>{p.name}</strong>
-                <p>{p.service}</p>
-                <small>⭐ {p.rating}</small>
-                <small>{p.online ? "🟢 online" : "⚫ offline"}</small>
-              </div>
+            <div key={p.id} className="card glass">
+              <img src={p.img} alt="" />
+              <h3>{p.name}</h3>
+              <p>{p.service}</p>
+              <small>{p.online ? "🟢 Online" : "⚫ Offline"}</small>
 
-              <div>
-                <button onClick={() => navigate(`/providers/${p.id}`)}>
-                  View
-                </button>
-                <button onClick={() => bookProvider(p)}>Book</button>
-              </div>
+              <button onClick={() => navigate(`/providers/${p.id}`)}>View</button>
+              <button onClick={() => bookProvider(p)}>Book</button>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="section">
-        <div className="quick-actions">
-          <button onClick={() => navigate("/services")}>Services</button>
-          <button onClick={() => navigate("/providers")}>Providers</button>
-          <button onClick={() => navigate("/bookings")}>Bookings</button>
-          <button onClick={() => navigate("/wallet")}>Wallet</button>
-        </div>
-      </section>
-      <div className="quick-actions">
-  <button onClick={() => setFeedFilter("all")}>All</button>
-  <button onClick={() => setFeedFilter("guest")}>Users</button>
-  <button onClick={() => setFeedFilter("provider")}>Providers</button>
-</div>
-
-      <section className="section">
-        <div className="card">
-          <textarea
-            value={newPost}
-            onChange={(e) => setNewPost(e.target.value)}
-            placeholder="Share your experience..."
-          />
-          <button onClick={addPost}>Post</button>
-        </div>
+      {/* ACTION HUB */}
+      <section className="action-hub">
+        <div onClick={() => navigate("/services")}>🛠 Services</div>
+        <div onClick={() => navigate("/providers")}>👷 Providers</div>
+        <div onClick={() => navigate("/bookings")}>📅 Bookings</div>
+        <div onClick={() => navigate("/wallet")}>💳 Wallet</div>
+        <div onClick={() => navigate("/support")}>🆘 Help</div>
       </section>
 
-      <section className="section feed-box">
+      {/* POSTS */}
+      <section className="section">
+        <textarea
+          value={newPost}
+          onChange={(e) => setNewPost(e.target.value)}
+          placeholder="Share experience..."
+        />
+        <button onClick={addPost}>Post</button>
+      </section>
+
+      {/* FEED */}
+      <section className="section">
         {filteredPosts.map((post) => (
           <div key={post.id} className="card">
-            <div>
-              <strong>{post.user}</strong>
-              <small>{post.time}</small>
-              <p>{post.content}</p>
-            </div>
+            <h4>{post.user}</h4>
+            <small>{post.time}</small>
+            <p>{post.content}</p>
 
-            <div>
-              <button onClick={() => likePost(post.id)}>👍 {post.likes}</button>
+            <button onClick={() => likePost(post.id)}>👍 {post.likes}</button>
 
-              <input
-                value={commentInputs[post.id] || ""}
-                onChange={(e) =>
-                  setCommentInputs({
-                    ...commentInputs,
-                    [post.id]: e.target.value,
-                  })
-                }
-              />
+            <input
+              placeholder="comment..."
+              value={commentInputs[post.id] || ""}
+              onChange={(e) =>
+                setCommentInputs({
+                  ...commentInputs,
+                  [post.id]: e.target.value,
+                })
+              }
+            />
 
-              <button onClick={() => addComment(post.id)}>Comment</button>
-            </div>
+            <button onClick={() => addComment(post.id)}>Comment</button>
           </div>
         ))}
       </section>
 
-      <section className="section">
-        <ServiceCategories />
-      </section>
+      {/* MODULES */}
+      <ServiceCategories />
+      <FeaturedProviders />
+      <HowItWorks />
+      <Testimonials />
 
-      <section className="section">
-        <FeaturedProviders />
-      </section>
-
-      <section className="section">
-        <HowItWorks />
-      </section>
-
-      <section className="section">
-        <Testimonials />
-      </section>
-
-      {/* ================= HOMICARE FOOTER (FIXED INSIDE COMPONENT) ================= */}
-      <section className="homi-footer">
-
-        <div className="footer-block">
-          <h2>Welcome to HomiCare</h2>
-          <p>
-            HomiCare connects you with trusted home service providers across Uganda.
-            Book cleaners, electricians, plumbers and more in seconds.
-          </p>
+      {/* HOW IT WORKS */}
+      <section className="how-it-works-section">
+        <h2>🚀 How HomiCare Works</h2>
+        <div className="flex-row">
+          <div className="how-card"><h3>🔍 Search</h3><p>Find service fast</p></div>
+          <div className="how-card"><h3>👷 Choose</h3><p>Select provider</p></div>
+          <div className="how-card"><h3>📅 Book</h3><p>Schedule instantly</p></div>
+          <div className="how-card"><h3>🏠 Enjoy</h3><p>Get service at home</p></div>
         </div>
+      </section>
 
-        <div className="footer-cta">
-          <h2>Start using HomiCare today</h2>
-          <p>Reliable home services at your fingertips.</p>
-
-          <button onClick={() => navigate("/services")}>
-            Explore Services
-          </button>
+      {/* ABOUT */}
+      <section className="about-section">
+        <h2>📖 About HomiCare</h2>
+        <div className="flex-row">
+          <div className="about-card"><h3>Mission</h3><p>Fast services</p></div>
+          <div className="about-card"><h3>Vision</h3><p>Africa platform</p></div>
+          <div className="about-card"><h3>Trust</h3><p>Verified providers</p></div>
         </div>
+      </section>
 
+      {/* HELP */}
+      <section className="help-section">
+        <h2>🆘 Help Center</h2>
+        <div className="flex-row">
+          <div className="help-card"><h3>Support</h3><p>Contact us anytime</p></div>
+          <div className="help-card"><h3>FAQ</h3><p>Common answers</p></div>
+          <div className="help-card"><h3>Report</h3><p>Report issues</p></div>
+        </div>
       </section>
 
     </div>
