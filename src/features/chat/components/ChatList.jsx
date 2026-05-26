@@ -32,77 +32,100 @@ function ChatList() {
   const [showTime, setShowTime] = useState(true);
   const [showAvatars, setShowAvatars] = useState(true);
 
-  const [networkStatus, setNetworkStatus] = useState(
-    navigator.onLine
-  );
+  const [networkStatus, setNetworkStatus] =
+    useState(navigator.onLine);
 
-  const [voiceSearch, setVoiceSearch] = useState(false);
+  const [voiceSearch, setVoiceSearch] =
+    useState(false);
 
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] =
+    useState(false);
 
-  const [recentSearches, setRecentSearches] = useState(
-    () => {
+  const [recentSearches, setRecentSearches] =
+    useState(() => {
       return JSON.parse(
-        localStorage.getItem("recentSearches") || "[]"
+        localStorage.getItem("recentSearches") ||
+          "[]"
       );
-    }
-  );
+    });
 
-  // ================= DYNAMIC STORAGE =================
+  // ================= STORAGE =================
   const [pinned, setPinned] = useState(() => {
     return JSON.parse(
-      localStorage.getItem("pinnedChats") || "[]"
+      localStorage.getItem("pinnedChats") ||
+        "[]"
     );
   });
 
-  const [favorites, setFavorites] = useState(() => {
-    return JSON.parse(
-      localStorage.getItem("favoriteChats") || "[]"
-    );
-  });
+  const [favorites, setFavorites] =
+    useState(() => {
+      return JSON.parse(
+        localStorage.getItem(
+          "favoriteChats"
+        ) || "[]"
+      );
+    });
 
   const [muted, setMuted] = useState(() => {
     return JSON.parse(
-      localStorage.getItem("mutedChats") || "[]"
+      localStorage.getItem("mutedChats") ||
+        "[]"
     );
   });
 
-  const [archived, setArchived] = useState(() => {
-    return JSON.parse(
-      localStorage.getItem("archivedChats") || "[]"
-    );
-  });
+  const [archived, setArchived] =
+    useState(() => {
+      return JSON.parse(
+        localStorage.getItem(
+          "archivedChats"
+        ) || "[]"
+      );
+    });
 
   const [blocked, setBlocked] = useState(() => {
     return JSON.parse(
-      localStorage.getItem("blockedChats") || "[]"
+      localStorage.getItem("blockedChats") ||
+        "[]"
     );
   });
 
-  const [deletedChats, setDeletedChats] = useState(() => {
-    return JSON.parse(
-      localStorage.getItem("deletedChats") || "[]"
-    );
-  });
+  const [deletedChats, setDeletedChats] =
+    useState(() => {
+      return JSON.parse(
+        localStorage.getItem(
+          "deletedChats"
+        ) || "[]"
+      );
+    });
 
   // ================= REFS =================
   const searchRef = useRef(null);
 
   // ================= ONLINE/OFFLINE =================
   useEffect(() => {
-    const online = () => setNetworkStatus(true);
-    const offline = () => setNetworkStatus(false);
+    const online = () =>
+      setNetworkStatus(true);
+
+    const offline = () =>
+      setNetworkStatus(false);
 
     window.addEventListener("online", online);
     window.addEventListener("offline", offline);
 
     return () => {
-      window.removeEventListener("online", online);
-      window.removeEventListener("offline", offline);
+      window.removeEventListener(
+        "online",
+        online
+      );
+
+      window.removeEventListener(
+        "offline",
+        offline
+      );
     };
   }, []);
 
-  // ================= SAVE TO STORAGE =================
+  // ================= SAVE STORAGE =================
   useEffect(() => {
     localStorage.setItem(
       "pinnedChats",
@@ -164,10 +187,16 @@ function ChatList() {
       }
     };
 
-    window.addEventListener("keydown", handleKey);
+    window.addEventListener(
+      "keydown",
+      handleKey
+    );
 
     return () => {
-      window.removeEventListener("keydown", handleKey);
+      window.removeEventListener(
+        "keydown",
+        handleKey
+      );
     };
   }, []);
 
@@ -186,55 +215,58 @@ function ChatList() {
   );
 
   // ================= ACTIONS =================
-  const togglePin = useCallback((id) => {
+  const togglePin = (id) => {
     setPinned((prev) =>
       prev.includes(id)
         ? prev.filter((i) => i !== id)
         : [...prev, id]
     );
-  }, []);
+  };
 
-  const toggleFavorite = useCallback((id) => {
+  const toggleFavorite = (id) => {
     setFavorites((prev) =>
       prev.includes(id)
         ? prev.filter((i) => i !== id)
         : [...prev, id]
     );
-  }, []);
+  };
 
-  const toggleMute = useCallback((id) => {
+  const toggleMute = (id) => {
     setMuted((prev) =>
       prev.includes(id)
         ? prev.filter((i) => i !== id)
         : [...prev, id]
     );
-  }, []);
+  };
 
-  const toggleArchive = useCallback((id) => {
+  const toggleArchive = (id) => {
     setArchived((prev) =>
       prev.includes(id)
         ? prev.filter((i) => i !== id)
         : [...prev, id]
     );
-  }, []);
+  };
 
-  const toggleBlock = useCallback((id) => {
+  const toggleBlock = (id) => {
     setBlocked((prev) =>
       prev.includes(id)
         ? prev.filter((i) => i !== id)
         : [...prev, id]
     );
-  }, []);
+  };
 
-  const deleteChat = useCallback((id) => {
+  const deleteChat = (id) => {
     const confirmDelete = window.confirm(
       "Delete this conversation permanently?"
     );
 
     if (confirmDelete) {
-      setDeletedChats((prev) => [...prev, id]);
+      setDeletedChats((prev) => [
+        ...prev,
+        id,
+      ]);
     }
-  }, []);
+  };
 
   // ================= SEARCH =================
   const clearSearch = () => {
@@ -255,7 +287,7 @@ function ChatList() {
     }
   };
 
-  // ================= VOICE SEARCH =================
+  // ================= VOICE =================
   const startVoiceSearch = () => {
     setVoiceSearch(true);
 
@@ -269,7 +301,8 @@ function ChatList() {
   const totalUnread = useMemo(() => {
     return users.reduce((acc, user) => {
       return (
-        acc + (getUnreadCount?.(user.id) || 0)
+        acc +
+        (getUnreadCount?.(user.id) || 0)
       );
     }, 0);
   }, [users, getUnreadCount]);
@@ -291,7 +324,9 @@ function ChatList() {
     );
 
     if (tab === "online") {
-      filtered = filtered.filter((u) => u.online);
+      filtered = filtered.filter(
+        (u) => u.online
+      );
     }
 
     if (tab === "favorites") {
@@ -319,13 +354,11 @@ function ChatList() {
     }
 
     filtered.sort((a, b) => {
-      const aPinned = pinned.includes(a.id)
-        ? 1
-        : 0;
+      const aPinned =
+        pinned.includes(a.id) ? 1 : 0;
 
-      const bPinned = pinned.includes(b.id)
-        ? 1
-        : 0;
+      const bPinned =
+        pinned.includes(b.id) ? 1 : 0;
 
       if (aPinned !== bPinned) {
         return bPinned - aPinned;
@@ -335,7 +368,8 @@ function ChatList() {
       const bMsg = getLastMessage?.(b.id);
 
       return (
-        (bMsg?.id || 0) - (aMsg?.id || 0)
+        (bMsg?.id || 0) -
+        (aMsg?.id || 0)
       );
     });
 
@@ -363,395 +397,451 @@ function ChatList() {
   }
 
   return (
-    <div
-      className={`chatListContainer ${
-        darkMode ? "dark" : ""
-      } ${compactMode ? "compact" : ""}`}
-    >
-      {/* ================= MOBILE BAR ================= */}
-      <div className="mobileTopBar">
-        <button
-          className="mobileMenuBtn"
-          onClick={() =>
-            setMobileOpen(!mobileOpen)
-          }
-        >
-          ☰
-        </button>
-
-        <h2>Chats</h2>
-
-        <button
-          onClick={() =>
-            setShowSettings(!showSettings)
-          }
-        >
-          ⚙
-        </button>
-      </div>
-
-      {/* ================= HEADER ================= */}
-      <div className="chatListHeader">
-        <div className="headerTop">
-          <h2>Messages</h2>
-
-          <div className="headerActions">
-            <button
-              onClick={() =>
-                setDarkMode(!darkMode)
-              }
-            >
-              {darkMode ? "☀" : "🌙"}
-            </button>
-
-            <button
-              onClick={() =>
-                setCompactMode(!compactMode)
-              }
-            >
-              ⬚
-            </button>
-
-            <button
-              onClick={() =>
-                setShowSettings(!showSettings)
-              }
-            >
-              ⚙
-            </button>
-          </div>
-        </div>
-
-        {/* ================= NETWORK ================= */}
+    <>
+      {/* MOBILE OVERLAY */}
+      {mobileOpen && (
         <div
-          className={`networkStatus ${
-            networkStatus
-              ? "onlineNet"
-              : "offlineNet"
-          }`}
-        >
-          {networkStatus
-            ? "🟢 Online"
-            : "🔴 Offline"}
-        </div>
-
-        {/* ================= SEARCH ================= */}
-        <div className="searchBox">
-          <input
-            ref={searchRef}
-            placeholder="Search chats..."
-            value={search}
-            onChange={(e) =>
-              handleSearch(e.target.value)
-            }
-          />
-
-          <button onClick={clearSearch}>
-            ✕
-          </button>
-
-          <button onClick={startVoiceSearch}>
-            {voiceSearch ? "🎙..." : "🎤"}
-          </button>
-        </div>
-
-        {/* ================= RECENT SEARCHES ================= */}
-        {recentSearches.length > 0 && (
-          <div className="recentSearches">
-            {recentSearches.map(
-              (item, index) => (
-                <span
-                  key={index}
-                  onClick={() =>
-                    setSearch(item)
-                  }
-                >
-                  {item}
-                </span>
-              )
-            )}
-          </div>
-        )}
-
-        {/* ================= TABS ================= */}
-        <div className="tabs">
-          <button
-            onClick={() => setTab("all")}
-          >
-            All
-          </button>
-
-          <button
-            onClick={() =>
-              setTab("online")
-            }
-          >
-            Online
-          </button>
-
-          <button
-            onClick={() =>
-              setTab("favorites")
-            }
-          >
-            Favorites
-          </button>
-
-          <button
-            onClick={() =>
-              setTab("pinned")
-            }
-          >
-            Pinned
-          </button>
-
-          <button
-            onClick={() =>
-              setTab("muted")
-            }
-          >
-            Muted
-          </button>
-
-          <button
-            onClick={() =>
-              setTab("archived")
-            }
-          >
-            Archived
-          </button>
-        </div>
-      </div>
-
-      {/* ================= SETTINGS ================= */}
-      {showSettings && (
-        <div className="settingsPanel">
-          <h3>Settings</h3>
-
-          <label>
-            <input
-              type="checkbox"
-              checked={showAvatars}
-              onChange={() =>
-                setShowAvatars(
-                  !showAvatars
-                )
-              }
-            />
-            Show avatars
-          </label>
-
-          <label>
-            <input
-              type="checkbox"
-              checked={showPreview}
-              onChange={() =>
-                setShowPreview(
-                  !showPreview
-                )
-              }
-            />
-            Show preview
-          </label>
-
-          <label>
-            <input
-              type="checkbox"
-              checked={showTime}
-              onChange={() =>
-                setShowTime(!showTime)
-              }
-            />
-            Show time
-          </label>
-        </div>
+          className="mobileOverlay"
+          onClick={() =>
+            setMobileOpen(false)
+          }
+        />
       )}
 
-      {/* ================= NOTIFICATION BAR ================= */}
-      <div className="notificationBar">
-        <span>
-          Total unread: {totalUnread}
-        </span>
-
-        <button
-          onClick={() =>
-            window.location.reload()
-          }
-        >
-          Refresh
-        </button>
-      </div>
-
-      {/* ================= CHAT LIST ================= */}
       <div
-        className={`chatList ${
-          mobileOpen ? "mobileOpen" : ""
+        className={`chatListContainer ${
+          darkMode ? "dark" : ""
+        } ${
+          compactMode ? "compact" : ""
+        } ${
+          mobileOpen ? "mobileSidebarOpen" : ""
         }`}
       >
-        {filteredUsers.length === 0 && (
-          <div className="emptyChats">
-            No chats found
+        {/* MOBILE TOP BAR */}
+        <div className="mobileTopBar">
+          <button
+            className="mobileMenuBtn"
+            onClick={() =>
+              setMobileOpen(!mobileOpen)
+            }
+          >
+            ☰
+          </button>
+
+          <h2>Chats</h2>
+
+          <button
+            onClick={() =>
+              setShowSettings(
+                !showSettings
+              )
+            }
+          >
+            ⚙
+          </button>
+        </div>
+
+        {/* HEADER */}
+        <div className="chatListHeader">
+          <div className="headerTop">
+            <h2>Messages</h2>
+
+            <div className="headerActions">
+              <button
+                onClick={() =>
+                  setDarkMode(
+                    !darkMode
+                  )
+                }
+              >
+                {darkMode ? "☀" : "🌙"}
+              </button>
+
+              <button
+                onClick={() =>
+                  setCompactMode(
+                    !compactMode
+                  )
+                }
+              >
+                ⬚
+              </button>
+            </div>
+          </div>
+
+          {/* NETWORK */}
+          <div
+            className={`networkStatus ${
+              networkStatus
+                ? "onlineNet"
+                : "offlineNet"
+            }`}
+          >
+            {networkStatus
+              ? "🟢 Online"
+              : "🔴 Offline"}
+          </div>
+
+          {/* SEARCH */}
+          <div className="searchBox">
+            <input
+              ref={searchRef}
+              placeholder="Search chats..."
+              value={search}
+              onChange={(e) =>
+                handleSearch(
+                  e.target.value
+                )
+              }
+            />
+
+            <button
+              onClick={clearSearch}
+            >
+              ✕
+            </button>
+
+            <button
+              onClick={
+                startVoiceSearch
+              }
+            >
+              {voiceSearch
+                ? "🎙..."
+                : "🎤"}
+            </button>
+          </div>
+
+          {/* RECENT SEARCHES */}
+          {recentSearches.length >
+            0 && (
+            <div className="recentSearches">
+              {recentSearches.map(
+                (item, index) => (
+                  <span
+                    key={index}
+                    onClick={() =>
+                      setSearch(item)
+                    }
+                  >
+                    {item}
+                  </span>
+                )
+              )}
+            </div>
+          )}
+
+          {/* TABS */}
+          <div className="tabs">
+            <button
+              onClick={() =>
+                setTab("all")
+              }
+            >
+              All
+            </button>
+
+            <button
+              onClick={() =>
+                setTab("online")
+              }
+            >
+              Online
+            </button>
+
+            <button
+              onClick={() =>
+                setTab(
+                  "favorites"
+                )
+              }
+            >
+              Favorites
+            </button>
+
+            <button
+              onClick={() =>
+                setTab("pinned")
+              }
+            >
+              Pinned
+            </button>
+
+            <button
+              onClick={() =>
+                setTab("muted")
+              }
+            >
+              Muted
+            </button>
+
+            <button
+              onClick={() =>
+                setTab(
+                  "archived"
+                )
+              }
+            >
+              Archived
+            </button>
+          </div>
+        </div>
+
+        {/* SETTINGS */}
+        {showSettings && (
+          <div className="settingsPanel">
+            <h3>Settings</h3>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={
+                  showAvatars
+                }
+                onChange={() =>
+                  setShowAvatars(
+                    !showAvatars
+                  )
+                }
+              />
+              Show avatars
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={
+                  showPreview
+                }
+                onChange={() =>
+                  setShowPreview(
+                    !showPreview
+                  )
+                }
+              />
+              Show preview
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={showTime}
+                onChange={() =>
+                  setShowTime(
+                    !showTime
+                  )
+                }
+              />
+              Show time
+            </label>
           </div>
         )}
 
-        {filteredUsers.map((user) => {
-          const lastMsg =
-            getLastMessage?.(user.id);
+        {/* NOTIFICATION */}
+        <div className="notificationBar">
+          <span>
+            Total unread:{" "}
+            {totalUnread}
+          </span>
 
-          const unread =
-            getUnreadCount?.(user.id) || 0;
+          <button
+            onClick={() =>
+              window.location.reload()
+            }
+          >
+            Refresh
+          </button>
+        </div>
 
-          const isPinned =
-            pinned.includes(user.id);
+        {/* CHAT LIST */}
+        <div className="chatList">
+          {filteredUsers.length ===
+            0 && (
+            <div className="emptyChats">
+              No chats found
+            </div>
+          )}
 
-          const isFav =
-            favorites.includes(user.id);
+          {filteredUsers.map((user) => {
+            const lastMsg =
+              getLastMessage?.(
+                user.id
+              );
 
-          const isMuted =
-            muted.includes(user.id);
+            const unread =
+              getUnreadCount?.(
+                user.id
+              ) || 0;
 
-          return (
-            <div
-              key={user.id}
-              className={`chatItem ${
-                activeChat === user.id
-                  ? "active"
-                  : ""
-              }`}
-              onClick={() =>
-                openChat(user.id)
-              }
-            >
-              {/* ================= AVATAR ================= */}
-              {showAvatars && (
-                <div className="avatar">
-                  {user.avatar ? (
-                    <img
-                      src={user.avatar}
-                      alt={user.name}
-                    />
-                  ) : (
-                    user.name?.charAt(0)
-                  )}
-
-                  {user.online && (
-                    <span className="onlineDot" />
-                  )}
-                </div>
-              )}
-
-              {/* ================= INFO ================= */}
-              <div className="chatInfo">
-                <div className="topRow">
-                  <div className="nameRow">
-                    <span className="name">
-                      {user.name}
-                    </span>
-
-                    {isPinned && (
-                      <span>📌</span>
+            return (
+              <div
+                key={user.id}
+                className={`chatItem ${
+                  activeChat ===
+                  user.id
+                    ? "active"
+                    : ""
+                }`}
+                onClick={() =>
+                  openChat(user.id)
+                }
+              >
+                {/* AVATAR */}
+                {showAvatars && (
+                  <div className="avatar">
+                    {user.avatar ? (
+                      <img
+                        src={
+                          user.avatar
+                        }
+                        alt={
+                          user.name
+                        }
+                      />
+                    ) : (
+                      user.name?.charAt(
+                        0
+                      )
                     )}
 
-                    {isFav && (
-                      <span>⭐</span>
-                    )}
-
-                    {isMuted && (
-                      <span>🔕</span>
-                    )}
-                  </div>
-
-                  {showTime && (
-                    <span className="time">
-                      {lastMsg?.time ||
-                        "just now"}
-                    </span>
-                  )}
-                </div>
-
-                {showPreview && (
-                  <div className="bottomRow">
-                    <span className="message">
-                      {lastMsg?.text ||
-                        "No messages yet"}
-                    </span>
-
-                    {unread > 0 && (
-                      <span className="unread">
-                        {unread}
-                      </span>
+                    {user.online && (
+                      <span className="onlineDot" />
                     )}
                   </div>
                 )}
+
+                {/* INFO */}
+                <div className="chatInfo">
+                  <div className="topRow">
+                    <div className="nameRow">
+                      <span className="name">
+                        {user.name}
+                      </span>
+
+                      {pinned.includes(
+                        user.id
+                      ) && (
+                        <span>
+                          📌
+                        </span>
+                      )}
+
+                      {favorites.includes(
+                        user.id
+                      ) && (
+                        <span>
+                          ⭐
+                        </span>
+                      )}
+
+                      {muted.includes(
+                        user.id
+                      ) && (
+                        <span>
+                          🔕
+                        </span>
+                      )}
+                    </div>
+
+                    {showTime && (
+                      <span className="time">
+                        {lastMsg?.time ||
+                          "now"}
+                      </span>
+                    )}
+                  </div>
+
+                  {showPreview && (
+                    <div className="bottomRow">
+                      <span className="message">
+                        {lastMsg?.text ||
+                          "No messages yet"}
+                      </span>
+
+                      {unread >
+                        0 && (
+                        <span className="unread">
+                          {unread}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* ACTIONS */}
+                <div className="actions">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      togglePin(
+                        user.id
+                      );
+                    }}
+                  >
+                    📌
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFavorite(
+                        user.id
+                      );
+                    }}
+                  >
+                    ⭐
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleMute(
+                        user.id
+                      );
+                    }}
+                  >
+                    🔕
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleArchive(
+                        user.id
+                      );
+                    }}
+                  >
+                    📦
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleBlock(
+                        user.id
+                      );
+                    }}
+                  >
+                    🚫
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteChat(
+                        user.id
+                      );
+                    }}
+                  >
+                    🗑
+                  </button>
+                </div>
               </div>
-
-              {/* ================= ACTIONS ================= */}
-              <div className="actions">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    togglePin(user.id);
-                  }}
-                >
-                  📌
-                </button>
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleFavorite(
-                      user.id
-                    );
-                  }}
-                >
-                  ⭐
-                </button>
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleMute(user.id);
-                  }}
-                >
-                  🔕
-                </button>
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleArchive(
-                      user.id
-                    );
-                  }}
-                >
-                  📦
-                </button>
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleBlock(
-                      user.id
-                    );
-                  }}
-                >
-                  🚫
-                </button>
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteChat(user.id);
-                  }}
-                >
-                  🗑
-                </button>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

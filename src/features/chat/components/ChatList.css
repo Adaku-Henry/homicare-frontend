@@ -1,21 +1,33 @@
 /* =========================
-   GLOBAL CHAT LAYOUT
+   GLOBAL RESET
+========================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+/* =========================
+   MAIN CHAT WRAPPER
 ========================= */
 
 .chatWrapper {
   display: flex;
   flex-direction: column;
-  height: 100vh;
   width: 100%;
-  background: #e5ddd5; /* WhatsApp-like background */
+  height: 100dvh;
+  background: #e5ddd5;
+  position: relative;
   overflow: hidden;
-  font-family: Arial, sans-serif;
-}
-.chatWrapper {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  width: 100%;
 }
 
 /* =========================
@@ -26,30 +38,44 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 14px;
+  padding: 14px 16px;
   background: #075e54;
   color: white;
+  min-height: 65px;
+
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 100;
+
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.chatHeaderLeft {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .chatUser {
-  font-weight: bold;
   font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .status {
   font-size: 12px;
-  opacity: 0.9;
+  opacity: 0.85;
 }
 
 .menuBtn {
-  background: transparent;
   border: none;
+  background: transparent;
   color: white;
-  font-size: 22px;
+  font-size: 24px;
   cursor: pointer;
+  padding: 4px 8px;
 }
 
 /* =========================
@@ -59,15 +85,25 @@
 .chatBody {
   flex: 1;
   overflow-y: auto;
-  padding: 12px;
+  overflow-x: hidden;
+
+  padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
+
+  scroll-behavior: smooth;
 }
 
-/* smooth scroll feel on mobile */
-.chatBody {
-  scroll-behavior: smooth;
+/* custom scrollbar */
+
+.chatBody::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chatBody::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
 }
 
 /* =========================
@@ -76,34 +112,43 @@
 
 .msg {
   max-width: 75%;
-  padding: 10px 12px;
-  border-radius: 10px;
+  padding: 10px 14px;
+  border-radius: 14px;
+
   font-size: 14px;
-  word-wrap: break-word;
-  position: relative;
+  line-height: 1.4;
+
   display: flex;
   flex-direction: column;
+
+  word-break: break-word;
+  overflow-wrap: break-word;
+
+  position: relative;
+
+  animation: fadeIn 0.2s ease;
 }
 
-/* received messages */
 .msg.other {
-  background: #ffffff;
+  background: white;
   align-self: flex-start;
-  border-top-left-radius: 2px;
+  border-top-left-radius: 4px;
+
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
-/* sent messages */
 .msg.me {
   background: #dcf8c6;
   align-self: flex-end;
-  border-top-right-radius: 2px;
+  border-top-right-radius: 4px;
+
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
-/* timestamp */
 .msgMeta {
-  font-size: 10px;
-  margin-top: 4px;
-  opacity: 0.6;
+  margin-top: 6px;
+  font-size: 11px;
+  opacity: 0.65;
   text-align: right;
 }
 
@@ -112,65 +157,120 @@
 ========================= */
 
 .typing {
-  font-size: 12px;
   padding: 6px 12px;
-  color: #555;
+  font-size: 13px;
+  color: #666;
   font-style: italic;
 }
 
 /* =========================
-   INPUT BAR (WHATSAPP STYLE)
+   INPUT BAR
 ========================= */
 
 .chatInputBar {
   display: flex;
   align-items: center;
-  padding: 10px;
+  gap: 10px;
+
+  padding: 10px 14px;
+
   background: #f0f0f0;
   border-top: 1px solid #ddd;
 
   position: sticky;
   bottom: 0;
-  gap: 8px;
+  z-index: 50;
 }
 
 .chatInput {
   flex: 1;
-  padding: 10px 14px;
+  min-width: 0;
+
+  padding: 12px 16px;
+
   border-radius: 25px;
   border: 1px solid #ccc;
+
   outline: none;
   font-size: 14px;
+
+  background: white;
+}
+
+.chatInput:focus {
+  border-color: #075e54;
 }
 
 .sendBtn {
+  width: 46px;
+  height: 46px;
+
+  border: none;
+  border-radius: 50%;
+
   background: #075e54;
   color: white;
-  border: none;
-  padding: 10px 14px;
-  border-radius: 50%;
-  font-size: 16px;
+
   cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 18px;
+
+  transition: 0.2s ease;
+}
+
+.sendBtn:hover {
+  transform: scale(1.05);
 }
 
 /* =========================
-   DRAWER (CONTACT PANEL)
+   DRAWER / SIDEBAR
 ========================= */
+
+.drawerOverlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.4);
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition: 0.3s ease;
+
+  z-index: 199;
+}
+
+.drawerOverlay.show {
+  opacity: 1;
+  visibility: visible;
+}
 
 .drawer {
   position: fixed;
   top: 0;
-  right: -100%;
-  width: 320px;
-  height: 100vh;
-  background: #ffffff;
-  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
-  transition: 0.3s ease-in-out;
-  z-index: 100;
+  right: -380px;
+
+  width: 360px;
+  max-width: 100%;
+
+  height: 100dvh;
+
+  background: white;
+
+  z-index: 200;
+
   display: flex;
   flex-direction: column;
-  padding: 12px;
-  overflow-y: auto;
+
+  transition: right 0.3s ease;
+
+  box-shadow: -3px 0 12px rgba(0, 0, 0, 0.2);
+
+  overflow: hidden;
 }
 
 .drawer.open {
@@ -181,22 +281,44 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+
+  padding: 16px;
+
+  background: #075e54;
+  color: white;
+
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.drawerHeader h3 {
+  font-size: 18px;
 }
 
 .drawerHeader button {
   border: none;
   background: transparent;
-  font-size: 18px;
+  color: white;
+  font-size: 22px;
   cursor: pointer;
 }
 
-/* inputs inside drawer */
+.drawerContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+}
+
 .drawer input {
-  padding: 10px;
-  margin-bottom: 8px;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+
+  border-radius: 8px;
   border: 1px solid #ddd;
-  border-radius: 6px;
+
+  outline: none;
 }
 
 /* =========================
@@ -204,28 +326,46 @@
 ========================= */
 
 .contactList {
-  margin-top: 10px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .contactCard {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
-  border-radius: 8px;
+
+  padding: 12px;
+
+  border-radius: 10px;
+
   background: #f7f7f7;
+
   cursor: pointer;
-  transition: 0.2s;
+
+  transition: 0.2s ease;
 }
 
 .contactCard:hover {
-  background: #eee;
+  background: #ececec;
 }
 
-/* online/offline dots */
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.contactName {
+  font-weight: 600;
+}
+
+.contactStatus {
+  font-size: 12px;
+  color: #666;
+}
+
 .onlineDot,
 .offlineDot {
   width: 10px;
@@ -246,38 +386,129 @@
 ========================= */
 
 .emptyChat {
-  height: 100vh;
+  width: 100%;
+  height: 100dvh;
+
   display: flex;
   justify-content: center;
   align-items: center;
+
+  color: #777;
   font-size: 16px;
-  color: #666;
+
   background: #f5f5f5;
 }
 
 /* =========================
-   MOBILE RESPONSIVE
+   ANIMATION
+========================= */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 992px) {
+  .msg {
+    max-width: 82%;
+  }
+
+  .drawer {
+    width: 320px;
+  }
+}
+
+/* =========================
+   MOBILE
 ========================= */
 
 @media (max-width: 768px) {
   .chatWrapper {
-    height: 100dvh; /* better than 100vh on mobile */
+    width: 100%;
+    height: 100dvh;
+  }
+
+  .chatHeader {
+    padding: 12px;
+  }
+
+  .chatUser {
+    font-size: 15px;
   }
 
   .chatBody {
     padding: 10px;
+    gap: 8px;
   }
 
   .msg {
-    max-width: 85%;
+    max-width: 88%;
     font-size: 13px;
+    padding: 10px 12px;
+  }
+
+  .chatInputBar {
+    padding: 10px;
+    padding-bottom: calc(
+      10px + env(safe-area-inset-bottom)
+    );
+  }
+
+  .chatInput {
+    font-size: 13px;
+    padding: 10px 14px;
+  }
+
+  .sendBtn {
+    width: 42px;
+    height: 42px;
+    font-size: 16px;
   }
 
   .drawer {
     width: 100%;
+    right: -100%;
   }
 
-  .chatInputBar {
-    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+  .drawer.open {
+    right: 0;
+  }
+}
+
+/* =========================
+   SMALL MOBILE
+========================= */
+
+@media (max-width: 480px) {
+  .chatHeader {
+    min-height: 58px;
+  }
+
+  .chatUser {
+    font-size: 14px;
+  }
+
+  .status {
+    font-size: 11px;
+  }
+
+  .msg {
+    max-width: 92%;
+    font-size: 12px;
+  }
+
+  .chatInput {
+    font-size: 12px;
   }
 }
