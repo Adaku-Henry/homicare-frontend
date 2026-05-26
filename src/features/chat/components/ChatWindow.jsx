@@ -3,6 +3,7 @@ import React, {
   useRef,
   useEffect,
   useMemo,
+  useCallback,
 } from "react";
 
 import { useChat } from "../context/ChatContext";
@@ -21,69 +22,91 @@ function ChatWindow() {
   } = useChat();
 
   const [text, setText] = useState("");
-  const [typingUser, setTypingUser] = useState("");
+  const [typingUsers, setTypingUsers] = useState({});
   const [contactsOpen, setContactsOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [onlineUsers, setOnlineUsers] = useState({});
+  const [pendingQueue, setPendingQueue] = useState([]);
+
   const [contacts, setContacts] = useState([]);
+  const [form, setForm] = useState({ name: "", phone: "", email: "" });
 
-  const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    email: "",
-  });
-
-  const endRef = useRef();
+  const endRef = useRef(null);
+  const typingRef = useRef(null);
 
   // ================= SAFE SOCKET =================
-  const safeEmit = (event, data) => {
-    if (socket && typeof socket.emit === "function") {
-      socket.emit(event, data);
+  const safeEmit = useCallback((event, data) => {
+    if (socket?.readyState === 1) {
+      socket.send(JSON.stringify({ event, data }));
     }
-  };
+  }, []);
 
   // ================= CHAT MESSAGES =================
-  const chatMessages = useMemo(() => {
-    return messages?.[activeChat] || [];
-  }, [messages, activeChat]);
+  const chatMessages = useMemo(
+    () => messages?.[activeChat] || [],
+    [messages, activeChat]
+  );
 
-  const activeUser = useMemo(() => {
-    return users?.find((u) => u.id === activeChat);
-  }, [users, activeChat]);
+  const activeUser = useMemo(
+    () => users?.find((u) => u.id === activeChat),
+    [users, activeChat]
+  );
 
-  // ================= SOCKET LISTENERS =================
+  // ================= SOCKET HANDLER =================
   useEffect(() => {
-    if (!activeChat || !socket) return;
+    if (!activeChat) return;
 
-    safeEmit("join_chat", activeChat);
+    safeEmit("join_chat", { chatId: activeChat });
 
-    const handleMessage = (msg) => {
-      if (!msg?.chatId) return;
+    const handleSocketMessage = (event) => {
+      try {
+        const payload = JSON.parse(event.data);
 
-      setMessages((prev) => ({
-        ...prev,
-        [msg.chatId]: [...(prev[msg.chatId] || []), msg],
-      }));
+        if (payload.event === "receive_message") {
+          const msg = payload.data;
+
+          setMessages((prev) => ({
+            ...prev,
+            [msg.chatId]: [...(prev[msg.chatId] || []), msg],
+          }));
+        }
+
+        if (payload.event === "typing") {
+          setTypingUsers((prev) => ({
+            ...prev,
+            [payload.data.userId]: true,
+          }));
+        }
+
+        if (payload.event === "stop_typing") {
+          setTypingUsers((prev) => ({
+            ...prev,
+            [payload.data.userId]: false,
+          }));
+        }
+
+        if (payload.event === "online_users") {
+          setOnlineUsers(payload.data || {});
+        }
+      } catch (e) {
+        console.log("socket error", e);
+      }
     };
 
-    const handleTyping = (chatId) => {
-      if (chatId === activeChat) setTypingUser("Typing...");
-    };
-
-    const handleStopTyping = () => setTypingUser("");
-
-    socket.on?.("receive_message", handleMessage);
-    socket.on?.("typing", handleTyping);
-    socket.on?.("stop_typing", handleStopTyping);
+    socket.addEventListener("message", handleSocketMessage);
 
     return () => {
-      socket.off?.("receive_message", handleMessage);
-      socket.off?.("typing", handleTyping);
-      socket.off?.("stop_typing", handleStopTyping);
+      socket.removeEventListener("message", handleSocketMessage);
     };
-  }, [activeChat, setMessages]);
+  }, [activeChat, safeEmit, setMessages]);
 
-  // ================= AUTO SCROLL =================
+  // ================= AUTO SCROLL (mobile safe) =================
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
+    const timeout = setTimeout(() => {
+      endRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 50);
+
+    return () => clearTimeout(timeout);
   }, [chatMessages]);
 
   // ================= SEND MESSAGE =================
@@ -99,99 +122,62 @@ function ChatWindow() {
       status: "sent",
     };
 
+    // optimistic UI
     setMessages((prev) => ({
       ...prev,
       [activeChat]: [...(prev[activeChat] || []), msg],
     }));
 
+    // send socket
     safeEmit("send_message", msg);
 
-    // fake reply (dev mode)
-    setTimeout(() => {
-      const reply = {
-        id: Date.now() + 1,
-        chatId: activeChat,
-        text: "Got your message 👍",
-        sender: "other",
-        time: new Date().toLocaleTimeString(),
-        status: "seen",
-      };
-
-      setMessages((prev) => ({
-        ...prev,
-        [activeChat]: [...(prev[activeChat] || []), reply],
-      }));
-    }, 1000);
+    // offline queue fallback
+    setPendingQueue((prev) => [...prev, msg]);
 
     setText("");
   };
 
-  // ================= TYPING =================
+  // ================= TYPING (debounced) =================
   const handleTyping = (val) => {
     setText(val);
 
-    safeEmit("typing", activeChat);
+    safeEmit("typing", { chatId: activeChat });
 
-    clearTimeout(window.typingTimer);
+    clearTimeout(typingRef.current);
 
-    window.typingTimer = setTimeout(() => {
-      safeEmit("stop_typing", activeChat);
-    }, 500);
+    typingRef.current = setTimeout(() => {
+      safeEmit("stop_typing", { chatId: activeChat });
+    }, 600);
   };
 
-  // ================= ADD CONTACT (FIXED & SAFE) =================
+  // ================= CONTACTS =================
   const addContact = () => {
-    if (!form.name.trim() || !form.phone.trim()) return;
+    if (!form.name || !form.phone) return;
 
-    const newId = Date.now();
+    const id = Date.now();
 
     const newContact = {
-      id: newId,
+      id,
       name: form.name,
       phone: form.phone,
       email: form.email,
-      online: true,
     };
 
-    // save locally
     setContacts((prev) => [...prev, newContact]);
 
-    // create chat history if missing
-    setMessages((prev) => {
-      return ({
-        ...prev,
-        [newId]: prev[newId] || [],
-      });
-    });
+    setMessages((prev) => ({
+      ...prev,
+      [id]: prev[id] || [],
+    }));
 
-    // add to users safely (NO PUSH mutation)
-    const exists = users?.find((u) => u.id === newId);
-
-    if (!exists) {
-// NOTE: if your context does not support setUsers,
-      // we just rely on selectChat + messages mapping
-    }
-
-    // open chat immediately
-    selectChat(newId);
-
+    selectChat(id);
     setForm({ name: "", phone: "", email: "" });
     setContactsOpen(false);
   };
 
-  // ================= OPEN CHAT =================
-  const openChat = (contact) => {
-    selectChat(contact.id);
-  };
-
-  const openWA = (phone) =>
-    window.open(`https://wa.me/${phone}`);
-
-  const openSMS = (phone) =>
-    window.open(`sms:${phone}`);
-
-  const openEmail = (email) =>
-    window.open(`mailto:${email}`);
+  const filteredContacts = contacts.filter((c) =>
+    c.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   // ================= EMPTY STATE =================
   if (!activeChat) {
@@ -207,35 +193,47 @@ function ChatWindow() {
 
       {/* HEADER */}
       <div className="chatHeader">
-        <div className="chatUser">
-          {activeUser?.name || "Chat"}
+        <div>
+          <div className="chatUser">
+            {activeUser?.name || "Chat"}
+          </div>
+
+          <small className="status">
+            {onlineUsers[activeChat] ? "🟢 online" : "⚫ offline"}
+          </small>
         </div>
 
-        <div className="typing">{typingUser}</div>
-
         <button
-          className="addBtn"
+          className="menuBtn"
           onClick={() => setContactsOpen(true)}
         >
-          +
+          ☰
         </button>
       </div>
 
-      {/* MESSAGES */}
+      {/* CHAT BODY */}
       <div className="chatBody">
-        {chatMessages.map((msg) => (
+        {chatMessages.map((msg, i) => (
           <div
             key={msg.id}
             className={`msg ${msg.sender === "me" ? "me" : "other"}`}
           >
             <div className="msgText">{msg.text}</div>
-            <div className="msgTime">
-              {msg.time} {msg.sender === "me" && "✔✔"}
+
+            <div className="msgMeta">
+              {msg.time}
+              {msg.sender === "me" && " ✔✔"}
             </div>
           </div>
         ))}
+
         <div ref={endRef} />
       </div>
+
+      {/* TYPING INDICATOR */}
+      {Object.values(typingUsers).some(Boolean) && (
+        <div className="typing">Someone is typing...</div>
+      )}
 
       {/* INPUT */}
       <div className="chatInputBar">
@@ -254,7 +252,16 @@ function ChatWindow() {
       {/* CONTACT DRAWER */}
       <div className={`drawer ${contactsOpen ? "open" : ""}`}>
 
-        <h3>Contacts</h3>
+        <div className="drawerHeader">
+          <h3>Contacts</h3>
+          <button onClick={() => setContactsOpen(false)}>✕</button>
+        </div>
+
+        <input
+          placeholder="Search..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
 
         <input
           placeholder="Name"
@@ -280,33 +287,28 @@ function ChatWindow() {
           }
         />
 
-        <button onClick={addContact}>
-          Save Contact
-        </button>
+        <button onClick={addContact}>+ Add Contact</button>
 
-        <button onClick={() => setContactsOpen(false)}>
-          Close
-        </button>
-
-        {/* CONTACT LIST */}
         <div className="contactList">
-          {contacts.map((c) => (
+          {filteredContacts.map((c) => (
             <div
               key={c.id}
               className="contactCard"
-              onClick={() => openChat(c)}
+              onClick={() => selectChat(c.id)}
             >
-              <b>{c.name}</b>
-
-              <div className="contactActions">
-                <button onClick={() => openWA(c.phone)}>WA</button>
-                <button onClick={() => openSMS(c.phone)}>SMS</button>
-                <button onClick={() => openEmail(c.email)}>Email</button>
+              <div>
+                <b>{c.name}</b>
+                <small>{c.phone}</small>
               </div>
+
+              <span
+                className={
+                  onlineUsers[c.id] ? "onlineDot" : "offlineDot"
+                }
+              />
             </div>
           ))}
         </div>
-
       </div>
 
     </div>

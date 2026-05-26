@@ -13,6 +13,12 @@ const sendMessage = (text) => {
     [activeChat]: [...(prev[activeChat] || []), newMsg],
   }));
 
+  socket.send(
+  JSON.stringify({
+    message: text,
+  })
+);
+
   // reset unread count for current chat
   setUnread((prev) => ({
     ...prev,
