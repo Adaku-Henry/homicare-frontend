@@ -1,0 +1,145 @@
+.editProfileWrapper {
+  background: #f5f6f8;
+  min-height: 100vh;
+  padding-bottom: 50px;
+}
+
+/* COVER */
+.editCoverSection {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+}
+
+.editCoverImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.coverOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+}
+
+/* HEADER */
+.editHeaderCard {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  background: white;
+  margin: -40px auto 20px;
+  width: 90%;
+  border-radius: 12px;
+}
+
+/* AVATAR */
+.editAvatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 3px solid white;
+}
+
+/* ACTION BAR */
+.actionBar {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.previewBtn,
+.saveBtn,
+.goProfileBtn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.saveBtn {
+  background: green;
+  color: white;
+}
+
+.goProfileBtn {
+  background: #0a66c2;
+  color: white;
+}
+
+/* GRID */
+.editProfileGrid {
+  display: flex;
+  gap: 20px;
+  width: 90%;
+  margin: auto;
+}
+
+/* SIDEBAR */
+.editSidebar {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.editSidebar button {
+  padding: 10px;
+  border: none;
+  background: white;
+  cursor: pointer;
+}
+
+.activeSectionBtn {
+  background: #0a66c2;
+  color: white;
+}
+
+/* CONTENT */
+.editContent {
+  flex: 1;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+/* FORM */
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+input, textarea {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+/* SKILLS */
+.skillTag {
+  display: inline-flex;
+  gap: 5px;
+  padding: 5px 10px;
+  background: #e6f0ff;
+  border-radius: 20px;
+  margin: 5px;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .editProfileGrid {
+    flex-direction: column;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .editHeaderCard {
+    flex-direction: column;
+    text-align: center;
+  }
+}

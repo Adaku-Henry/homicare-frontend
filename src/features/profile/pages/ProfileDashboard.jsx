@@ -1,149 +1,266 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
+
+import { Link, useNavigate } from "react-router-dom";
 import { useProfileContext } from "../context/ProfileContext";
 
 import ProfileHeader from "../components/ProfileHeader";
 import ProfileAvatar from "../components/ProfileAvatar";
 
 const ProfileDashboard = () => {
-  const { profile } = useProfileContext();
+  const navigate = useNavigate();
+  const { profile, loading } = useProfileContext();
+
+  // =========================
+  // STATES (ONLY ACTIVE ONES)
+  // =========================
+  const [search, setSearch] = useState("");
+  const [activeTab, setActiveTab] = useState("overview");
+
+  const [notifications] = useState([
+    { id: 1, text: "Profile viewed by 12 users", time: "2 mins ago" },
+    { id: 2, text: "New booking request received", time: "10 mins ago" },
+  ]);
+
+  const [activities] = useState([
+    "Updated profile photo",
+    "Completed electrical repair",
+    "Received 5-star rating",
+    "Connected with new customer",
+  ]);
+
+  const [followers, setFollowers] = useState(
+    profile?.followers || 0
+  );
+
+  const [profileViews, setProfileViews] = useState(124);
+
+  const [isOnline, setIsOnline] = useState(
+    profile?.online || false
+  );
+
+  const [themeDark, setThemeDark] = useState(true);
+
+  // =========================
+  // SAFE PROFILE (MEMOIZED)
+  // =========================
+  const safeProfile = useMemo(() => {
+    return {
+      fullName: profile?.fullName || "Unknown User",
+      email: profile?.email || "No email",
+      phone: profile?.phone || "No phone",
+      avatar: profile?.avatar || "https://i.pravatar.cc/200",
+      coverPhoto:
+        profile?.coverPhoto ||
+        "https://images.unsplash.com/photo-1522202176988-66273c2fd55f",
+      bio: profile?.bio || "Welcome to HomiCare",
+      city: profile?.city || "Kampala",
+      address: profile?.address || "No address",
+      rate: profile?.rate || "0",
+      availability: profile?.availability || "Available",
+      skills: profile?.skills || [],
+      experience: profile?.experience || "No experience",
+      role: profile?.role || "Customer",
+      completedJobs: profile?.completedJobs || 0,
+      rating: profile?.rating || "0.0",
+      wallet: profile?.wallet || 0,
+      username: profile?.username || "username",
+    };
+  }, [profile]);
+
+  // =========================
+  // PROFILE VIEW COUNTER (SIMULATED)
+  // =========================
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProfileViews((v) => v + 1);
+    }, 20000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // =========================
+  // FILTERED ACTIVITY
+  // =========================
+  const filteredActivities = useMemo(() => {
+    return activities.filter((a) =>
+      a.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [activities, search]);
+
+  // =========================
+  // FOLLOW ACTION
+  // =========================
+  const handleFollow = useCallback(() => {
+    setFollowers((f) => f + 1);
+  }, []);
+
+  // =========================
+  // ONLINE TOGGLE
+  // =========================
+  const toggleOnline = () => {
+    setIsOnline((prev) => !prev);
+  };
+
+  // =========================
+  // SHARE PROFILE
+  // =========================
+  const shareProfile = async () => {
+    try {
+      await navigator.share({
+        title: "HomiCare Profile",
+        text: safeProfile.fullName,
+        url: window.location.href,
+      });
+    } catch (err) {
+      console.log("Share not supported");
+    }
+  };
+
+  // =========================
+  // LOADING STATE
+  // =========================
+  if (loading) {
+    return <div className="dashboard-loading">Loading...</div>;
+  }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
+    <div className={`dashboardWrapper ${themeDark ? "darkTheme" : "lightTheme"}`}>
 
-      {/* HEADER */}
+      {/* ================= COVER ================= */}
+      <div className="dashboardCover">
+        <img
+          src={safeProfile.coverPhoto}
+          alt="cover"
+          className="dashboardCoverImage"
+        />
+
+        <div className="dashboardOverlay"></div>
+
+        <div className="dashboardTopBar">
+          <div>
+            <h1>HomiCare Dashboard</h1>
+            <p>Welcome {safeProfile.fullName}</p>
+          </div>
+
+          <div className="topActions">
+            <button onClick={() => setThemeDark(!themeDark)}>
+              {themeDark ? "☀ Light" : "🌙 Dark"}
+            </button>
+
+            <button onClick={shareProfile}>🔗 Share</button>
+          </div>
+        </div>
+      </div>
+
+      {/* ================= HEADER ================= */}
       <ProfileHeader />
 
-      {/* BODY */}
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* ================= GRID ================= */}
+      <div className="dashboardGrid">
 
-        {/* ================= LEFT PANEL ================= */}
-        <div className="bg-white p-4 rounded-xl shadow">
+        {/* LEFT */}
+        <div className="dashboardSidebar">
 
-          {/* AVATAR */}
-          <ProfileAvatar />
+          <div className="dashboardCard">
+            <ProfileAvatar />
 
-          {/* USER INFO */}
-          <div className="mt-3">
-            <h2 className="text-lg font-bold">
-              {profile?.fullName || "No Name"}
-            </h2>
+            <h2>{safeProfile.fullName}</h2>
+            <p>@{safeProfile.username}</p>
 
-            <p className="text-sm text-gray-500">
-              {profile?.email || "No email"}
-            </p>
+            <p>{safeProfile.bio}</p>
 
-            <p className="text-sm text-gray-500">
-              {profile?.phone || "No phone"}
-            </p>
+            <div className="profileStats">
+              <div>
+                <h3>{followers}</h3>
+                <p>Followers</p>
+              </div>
+
+              <div>
+                <h3>{profileViews}</h3>
+                <p>Views</p>
+              </div>
+            </div>
+
+            <button onClick={() => navigate("/profile/edit")}>
+              ✏ Edit Profile
+            </button>
+
+            <button onClick={handleFollow}>+ Follow</button>
+
+            <button onClick={toggleOnline}>
+              {isOnline ? "🟢 Online" : "⚫ Offline"}
+            </button>
           </div>
 
-          {/* NAV LINKS */}
-          <div className="mt-5 space-y-2">
+          {/* LINKS */}
+          <div className="dashboardCard">
+            <h3>Quick Links</h3>
 
-            <Link className="block text-blue-600" to="/profile/edit">
-              Edit Profile
-            </Link>
-
-            <Link className="block text-blue-600" to="/profile/address">
-              Manage Address
-            </Link>
-
-            <Link className="block text-blue-600" to="/profile/security">
-              Security Settings
-            </Link>
-
-            <Link className="block text-blue-600" to="/profile/notifications">
-              Notifications
-            </Link>
-
-            <Link className="block text-blue-600" to="/profile/preferences">
-              Preferences
-            </Link>
-
-            <Link className="block text-red-500" to="/profile/close">
-              Close Account
-            </Link>
-
+            <Link to="/profile/edit">Edit</Link>
+            <Link to="/wallet">Wallet</Link>
+            <Link to="/messages">Messages</Link>
+            <Link to="/bookings">Bookings</Link>
           </div>
         </div>
 
-        {/* ================= RIGHT PANEL ================= */}
-        <div className="md:col-span-2 bg-white p-4 rounded-xl shadow">
+        {/* RIGHT */}
+        <div className="dashboardContent">
 
-          <h2 className="text-xl font-bold mb-4">
-            Profile Overview
-          </h2>
-
-          {/* PROFILE DATA */}
-          <div className="grid grid-cols-2 gap-4">
-
-            <div className="p-3 bg-gray-50 rounded">
-              <p className="text-sm text-gray-500">Full Name</p>
-              <h3 className="text-lg font-bold">
-                {profile?.fullName || "-"}
-              </h3>
-            </div>
-
-            <div className="p-3 bg-gray-50 rounded">
-              <p className="text-sm text-gray-500">Email</p>
-              <h3 className="text-lg font-bold">
-                {profile?.email || "-"}
-              </h3>
-            </div>
-
-            <div className="p-3 bg-gray-50 rounded">
-              <p className="text-sm text-gray-500">Phone</p>
-              <h3 className="text-lg font-bold">
-                {profile?.phone || "-"}
-              </h3>
-            </div>
-
-            <div className="p-3 bg-gray-50 rounded">
-              <p className="text-sm text-gray-500">Avatar</p>
-              <h3 className="text-lg font-bold">
-                {profile?.avatar ? "Uploaded" : "Not set"}
-              </h3>
-            </div>
-
+          {/* TABS */}
+          <div className="dashboardTabs">
+            {["overview", "services", "activity", "analytics"].map((tab) => (
+              <button
+                key={tab}
+                className={activeTab === tab ? "activeTab" : ""}
+                onClick={() => setActiveTab(tab)}
+              >
+                {tab}
+              </button>
+            ))}
           </div>
 
-          {/* EXTRA DETAILS (from EditProfile) */}
-          <div className="mt-6 grid grid-cols-2 gap-4">
-
-            <div className="p-3 bg-blue-50 rounded">
-              <p className="text-sm text-gray-500">Skills</p>
-              <h3 className="text-lg font-bold">
-                {profile?.skills || "--"}
-              </h3>
+          {/* OVERVIEW */}
+          {activeTab === "overview" && (
+            <div className="infoGrid">
+              <div className="dashboardCard">Jobs: {safeProfile.completedJobs}</div>
+              <div className="dashboardCard">Rating: {safeProfile.rating}</div>
+              <div className="dashboardCard">Wallet: UGX {safeProfile.wallet}</div>
+              <div className="dashboardCard">City: {safeProfile.city}</div>
             </div>
+          )}
 
-            <div className="p-3 bg-green-50 rounded">
-              <p className="text-sm text-gray-500">Experience</p>
-              <h3 className="text-lg font-bold">
-                {profile?.experience || "--"}
-              </h3>
+          {/* ACTIVITY */}
+          {activeTab === "activity" && (
+            <div className="dashboardCard">
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search activity..."
+              />
+
+              {filteredActivities.map((a, i) => (
+                <p key={i}>✔ {a}</p>
+              ))}
             </div>
+          )}
 
-            <div className="p-3 bg-yellow-50 rounded">
-              <p className="text-sm text-gray-500">Rate</p>
-              <h3 className="text-lg font-bold">
-                {profile?.rate ? `UGX ${profile.rate}` : "--"}
-              </h3>
+          {/* ANALYTICS */}
+          {activeTab === "analytics" && (
+            <div className="dashboardCard">
+              <h3>Analytics</h3>
+              <p>Profile Views: {profileViews}</p>
+              <p>Followers: {followers}</p>
             </div>
-
-            <div className="p-3 bg-purple-50 rounded">
-              <p className="text-sm text-gray-500">Availability</p>
-              <h3 className="text-lg font-bold">
-                {profile?.availability || "--"}
-              </h3>
-            </div>
-
-          </div>
+          )}
 
         </div>
-
       </div>
+
     </div>
   );
 };

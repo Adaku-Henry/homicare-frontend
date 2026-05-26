@@ -1,0 +1,303 @@
+/* =========================
+   DESIGN SYSTEM (TOKENS)
+========================= */
+
+:root {
+  --primary: #0a66c2;
+  --primary-dark: #004182;
+
+  --bg: #f3f2ef;
+  --card: #ffffff;
+  --text: #111;
+  --muted: #666;
+
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --danger: #dc2626;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-md: 0 6px 20px rgba(0,0,0,0.12);
+
+  --transition: all 0.25s ease;
+}
+
+/* =========================
+   GLOBAL WRAPPER
+========================= */
+
+.proEditWrapper {
+  min-height: 100vh;
+  background: var(--bg);
+  padding: 20px;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* =========================
+   HEADER SECTION
+========================= */
+
+.proHeader {
+  background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+  color: white;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-md);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.proHeader h1 {
+  font-size: 22px;
+  margin: 0;
+}
+
+.statusBar {
+  display: flex;
+  gap: 15px;
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+/* =========================
+   CARD SYSTEM
+========================= */
+
+.card {
+  background: var(--card);
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.card h2 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+/* =========================
+   INPUTS
+========================= */
+
+input,
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 8px;
+  margin-bottom: 10px;
+
+  border-radius: var(--radius-sm);
+  border: 1px solid #ddd;
+  outline: none;
+
+  transition: var(--transition);
+  font-size: 14px;
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(10,102,194,0.1);
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 14px;
+  transition: var(--transition);
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* PRIMARY ACTION */
+button.primary {
+  background: var(--primary);
+  color: white;
+}
+
+/* SAVE BUTTON */
+.actions {
+  position: sticky;
+  bottom: 0;
+  background: white;
+  padding: 15px;
+  box-shadow: var(--shadow-sm);
+
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* =========================
+   AVAILABILITY CHECKBOXES
+========================= */
+
+.card label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+/* =========================
+   STATUS INDICATORS
+========================= */
+
+.status {
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+.status.success {
+  color: var(--success);
+}
+
+.status.warning {
+  color: var(--warning);
+}
+
+/* =========================
+   MEDIA UPLOAD SECTION
+========================= */
+
+.mediaGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.mediaGrid img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+
+.mediaGrid img:hover {
+  transform: scale(1.03);
+}
+
+/* =========================
+   RESPONSIVE DESIGN
+========================= */
+
+@media (max-width: 768px) {
+  .proHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .statusBar {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .actions {
+    justify-content: center;
+  }
+}
+
+/* =========================
+   LOADING STATES
+========================= */
+
+.skeleton {
+  background: linear-gradient(90deg, #eee, #f5f5f5, #eee);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* =========================
+   PROFILE STRENGTH BAR
+========================= */
+
+.progressBar {
+  width: 100%;
+  height: 8px;
+  background: #eee;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+  transition: width 0.4s ease;
+}
+
+/* =========================
+   MODAL (FUTURE EXTENSION READY)
+========================= */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  width: 90%;
+  max-width: 500px;
+}
+
+/* =========================
+   EXTRA UX STATES
+========================= */
+
+.warning {
+  background: #fff7ed;
+  color: var(--warning);
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  margin-top: 10px;
+}
+
+.success {
+  background: #ecfdf5;
+  color: var(--success);
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  margin-top: 10px;
+}

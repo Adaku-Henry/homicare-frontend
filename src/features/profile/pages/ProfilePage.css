@@ -1,43 +1,54 @@
+/* ================= WRAPPER ================= */
 .profile-wrapper {
   background: #f3f2ef;
   min-height: 100vh;
   padding-bottom: 40px;
 }
 
+/* ================= LINKEDIN STYLE BANNER ================= */
 .profile-banner {
-  height: 180px;
+  height: 200px;
   background: linear-gradient(90deg, #0a66c2, #004182);
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
 }
 
+/* ================= CARD ================= */
 .profile-card {
-  width: 700px;
+  width: 800px;
+  max-width: 95%;
   margin: -80px auto 0;
   background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  border-radius: 14px;
+  padding: 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
+/* ================= HEADER ================= */
 .profile-header {
   display: flex;
   gap: 20px;
   align-items: center;
 }
 
+/* ================= AVATAR ================= */
 .profile-avatar {
-  width: 110px;
-  height: 110px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   border: 4px solid white;
+  object-fit: cover;
 }
 
+/* ================= TEXT ================= */
 .profile-info h2 {
   margin: 0;
+  font-size: 22px;
 }
 
 .headline {
   color: #666;
-  margin: 5px 0;
+  margin-top: 5px;
 }
 
 .subtext {
@@ -45,12 +56,14 @@
   color: #888;
 }
 
+/* ================= SECTION ================= */
 .profile-section {
   margin-top: 20px;
   padding-top: 10px;
   border-top: 1px solid #eee;
 }
 
+/* ================= SKILLS ================= */
 .skills-container {
   display: flex;
   flex-wrap: wrap;
@@ -59,18 +72,38 @@
 
 .skill-badge {
   background: #e6f0ff;
-  padding: 5px 10px;
+  padding: 6px 12px;
   border-radius: 20px;
   font-size: 13px;
 }
 
+/* ================= BUTTON ================= */
 .edit-btn {
   margin-top: 20px;
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   border: none;
   background: #0a66c2;
   color: white;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s ease;
+}
+
+.edit-btn:hover {
+  background: #004182;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-card {
+    margin-top: -60px;
+    padding: 15px;
+  }
 }

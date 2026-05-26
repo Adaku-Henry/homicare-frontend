@@ -1,4 +1,11 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
+
 import { useNavigate } from "react-router-dom";
 import { useProfileContext } from "../../features/profile/context/ProfileContext";
 
@@ -45,145 +52,236 @@ const defaultProfile = {
   instantBooking: true,
 };
 
+/* =========================
+   MAIN COMPONENT
+========================= */
 export default function ProEditProfile() {
   const navigate = useNavigate();
   const { updateProfile } = useProfileContext();
 
   const [profile, setProfile] = useState(defaultProfile);
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
 
-  const [skillInput, setSkillInput] = useState("");
-  const [expInput, setExpInput] = useState("");
-  const [eduInput, setEduInput] = useState("");
+  const autoSaveRef = useRef(null);
 
   /* =========================
-     📸 PORTFOLIO UPLOADER
+     INIT LOAD (DRAFT SAFE)
+  ========================= */
+  useEffect(() => {
+    const draft = JSON.parse(
+      localStorage.getItem("pro_profile_draft") || "{}"
+    );
+
+    const merged = {
+      ...defaultProfile,
+      ...draft,
+    };
+
+    setProfile(merged);
+  }, []);
+
+  /* =========================
+     AUTO SAVE (DEBOUNCED)
+  ========================= */
+  useEffect(() => {
+    clearTimeout(autoSaveRef.current);
+
+    autoSaveRef.current = setTimeout(() => {
+      localStorage.setItem(
+        "pro_profile_draft",
+        JSON.stringify(profile)
+      );
+      setDirty(true);
+    }, 1000);
+
+    return () => clearTimeout(autoSaveRef.current);
+  }, [profile]);
+
+  /* =========================
+     FORM UPDATE SAFE HANDLER
+  ========================= */
+  const updateField = useCallback((key, value) => {
+    setProfile((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  }, []);
+
+  /* =========================
+     PORTFOLIO UPLOAD (SAFE)
   ========================= */
   const handlePortfolioUpload = (e) => {
-    const files = Array.from(e.target.files);
+    const files = Array.from(e.target.files || []);
 
     files.forEach((file) => {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfile((p) => ({
-          ...p,
-          portfolio: [...p.portfolio, reader.result],
+
+      reader.onload = () => {
+        setProfile((prev) => ({
+          ...prev,
+          portfolio: [...prev.portfolio, reader.result],
         }));
       };
+
       reader.readAsDataURL(file);
     });
   };
 
   /* =========================
-     📅 AVAILABILITY TOGGLE
+     AVAILABILITY TOGGLE
   ========================= */
-  const toggleDay = (day) => {
-    setProfile((p) => ({
-      ...p,
+  const toggleDay = useCallback((day) => {
+    setProfile((prev) => ({
+      ...prev,
       availability: {
-        ...p.availability,
-        [day]: !p.availability[day],
+        ...prev.availability,
+        [day]: !prev.availability[day],
       },
     }));
-  };
+  }, []);
 
   /* =========================
-     🧠 AI BIO GENERATOR (MOCK)
+     AI BIO GENERATOR (MOCK)
   ========================= */
-  const generateBio = () => {
-    const bio = `I am a skilled ${profile.service || "professional"}
-    with experience in delivering high-quality services.
-    I focus on reliability, speed, and customer satisfaction.`;
+  const generateBio = useCallback(() => {
+    const bio = `Experienced ${
+      profile.service || "professional"
+    } delivering reliable, high-quality services with customer satisfaction focus.`;
 
-    setProfile((p) => ({ ...p, bio }));
-  };
+    updateField("bio", bio);
+  }, [profile.service, updateField]);
 
   /* =========================
-     💰 DYNAMIC PRICING ENGINE
+     DYNAMIC PRICING ENGINE (REALISTIC)
   ========================= */
-  const calculateDynamicPrice = () => {
+  const dynamicPrice = useMemo(() => {
     const base = Number(profile.pricePerHour || 0);
-    const ratingBoost = profile.verified ? 1.2 : 1;
     const emergency = Number(profile.emergencyRate || 0);
+    const weekend = Number(profile.weekendRate || 0);
 
-    return Math.round(base * ratingBoost + emergency);
+    let multiplier = 1;
+
+    if (profile.verified) multiplier += 0.25;
+    if (profile.skills?.length > 3) multiplier += 0.1;
+    if (profile.experience?.length > 2) multiplier += 0.15;
+
+    return Math.round(base * multiplier + emergency + weekend);
+  }, [
+    profile.pricePerHour,
+    profile.emergencyRate,
+    profile.weekendRate,
+    profile.verified,
+    profile.skills,
+    profile.experience,
+  ]);
+
+  /* =========================
+     VALIDATION ENGINE
+  ========================= */
+  const isValid = useMemo(() => {
+    return (
+      profile.name.trim().length > 2 &&
+      profile.email.includes("@") &&
+      profile.phone.trim().length > 6
+    );
+  }, [profile]);
+
+  /* =========================
+     SAVE PROFILE (PRODUCTION SAFE)
+  ========================= */
+  const handleSubmit = async () => {
+    if (!isValid) {
+      alert("Please fill required fields correctly");
+      return;
+    }
+
+    setSaving(true);
+
+    try {
+      await updateProfile(profile);
+
+      localStorage.removeItem("pro_profile_draft");
+
+      setDirty(false);
+
+      setTimeout(() => {
+        navigate("/provider/profile");
+      }, 600);
+    } catch (err) {
+      console.error("Save failed", err);
+    }
+
+    setSaving(false);
   };
 
   /* =========================
-     ⭐ VERIFICATION DISPLAY
-  ========================= */
-  const VerificationBadge = () => (
-    <div style={{ marginTop: 10 }}>
-      {profile.verified ? (
-        <span style={{ color: "green" }}>✔ Verified Provider</span>
-      ) : (
-        <span style={{ color: "gray" }}>Not Verified</span>
-      )}
-    </div>
-  );
-
-  /* =========================
-     SUBMIT
-  ========================= */
-  const handleSubmit = useCallback(() => {
-    setLoading(true);
-
-    updateProfile(profile);
-
-    setTimeout(() => {
-      setLoading(false);
-      navigate("/provider/profile");
-    }, 800);
-  }, [profile, updateProfile, navigate]);
-
-  /* =========================
-     UI
+     RENDER
   ========================= */
   return (
-    <div style={styles.container}>
-      <h1>⭐ PRO Profile Builder</h1>
+    <div className="proEditWrapper">
 
-      {/* ================= MEDIA ================= */}
-      <div style={styles.card}>
-        <h2>Media</h2>
+      {/* HEADER */}
+      <div className="proHeader">
+        <h1>🚀 Pro Profile Builder</h1>
 
-        <img
-          src={profile.avatar || "https://via.placeholder.com/100"}
-          alt="avatar"
-          style={styles.avatar}
-        />
-
-        <input type="file" multiple onChange={(e) => handlePortfolioUpload(e)} />
+        <div className="statusBar">
+          <span>{dirty ? "Draft Saved" : "Not Saved"}</span>
+          <span>💰 Estimated: UGX {dynamicPrice}</span>
+        </div>
       </div>
 
-      {/* ================= VERIFICATION ================= */}
-      <div style={styles.card}>
-        <h2>Verification</h2>
-        <VerificationBadge />
-      </div>
+      {/* MEDIA */}
+      <section className="card">
+        <h2>Media Upload</h2>
 
-      {/* ================= BIO AI ================= */}
-      <div style={styles.card}>
-        <h2>AI Bio Builder</h2>
+        <input type="file" multiple onChange={handlePortfolioUpload} />
+      </section>
+
+      {/* BIO */}
+      <section className="card">
+        <h2>AI Bio</h2>
 
         <textarea
           value={profile.bio}
-          onChange={(e) =>
-            setProfile((p) => ({ ...p, bio: e.target.value }))
-          }
+          onChange={(e) => updateField("bio", e.target.value)}
         />
 
         <button onClick={generateBio}>
-          🧠 Generate AI Bio
+          Generate AI Bio
         </button>
-      </div>
+      </section>
 
-      {/* ================= AVAILABILITY CALENDAR ================= */}
-      <div style={styles.card}>
-        <h2>📅 Availability Calendar</h2>
+      {/* BASIC INFO */}
+      <section className="card">
+        <h2>Basic Info</h2>
+
+        <input
+          placeholder="Name"
+          value={profile.name}
+          onChange={(e) => updateField("name", e.target.value)}
+        />
+
+        <input
+          placeholder="Email"
+          value={profile.email}
+          onChange={(e) => updateField("email", e.target.value)}
+        />
+
+        <input
+          placeholder="Phone"
+          value={profile.phone}
+          onChange={(e) => updateField("phone", e.target.value)}
+        />
+      </section>
+
+      {/* AVAILABILITY */}
+      <section className="card">
+        <h2>Availability</h2>
 
         {Object.keys(profile.availability).map((day) => (
-          <label key={day} style={{ display: "block" }}>
+          <label key={day}>
             <input
               type="checkbox"
               checked={profile.availability[day]}
@@ -192,69 +290,14 @@ export default function ProEditProfile() {
             {day.toUpperCase()}
           </label>
         ))}
+      </section>
+
+      {/* ACTIONS */}
+      <div className="actions">
+        <button onClick={handleSubmit} disabled={saving}>
+          {saving ? "Saving..." : "Save Profile"}
+        </button>
       </div>
-
-      {/* ================= DYNAMIC PRICING ================= */}
-      <div style={styles.card}>
-        <h2>💰 Dynamic Pricing</h2>
-
-        <p>
-          Estimated Price:
-          <strong> {calculateDynamicPrice()} UGX</strong>
-        </p>
-      </div>
-
-      {/* ================= PORTFOLIO GRID ================= */}
-      <div style={styles.card}>
-        <h2>📸 Portfolio</h2>
-
-        <input type="file" multiple onChange={handlePortfolioUpload} />
-
-        <div style={styles.grid}>
-          {profile.portfolio.map((img, i) => (
-            <img
-              key={i}
-              src={img}
-              alt="portfolio"
-              style={styles.portfolioImg}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* ================= SAVE ================= */}
-      <button onClick={handleSubmit} style={styles.button}>
-        {loading ? "Saving..." : "Save Profile"}
-      </button>
     </div>
   );
 }
-
-/* ================= STYLES ================= */
-const styles = {
-  container: { padding: 20 },
-  card: {
-    padding: 20,
-    marginBottom: 20,
-    border: "1px solid #ddd",
-    borderRadius: 10,
-  },
-  avatar: { width: 100, height: 100, borderRadius: "50%" },
-  button: {
-    padding: 12,
-    background: "black",
-    color: "white",
-    border: "none",
-  },
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)",
-    gap: 10,
-  },
-  portfolioImg: {
-    width: "100%",
-    height: 100,
-    objectFit: "cover",
-    borderRadius: 8,
-  },
-};

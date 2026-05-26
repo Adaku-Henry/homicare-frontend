@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useProfileContext } from "../context/ProfileContext";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useProfileContext } from "../context/ProfileContext";
 
 const defaultForm = {
   fullName: "",
@@ -12,178 +12,263 @@ const defaultForm = {
   rate: "",
   availability: "",
   bio: "",
-  skills: "",
+  skills: [],
   experience: "",
   connections: "",
-  avatar: ""
+  avatar: "",
+  coverPhoto: "",
+  website: "",
+  facebook: "",
+  twitter: "",
+  instagram: "",
+  linkedin: "",
+  gender: "",
+  role: "",
+  education: "",
+  language: "",
+  portfolio: [],
+  certificates: [],
+  services: [],
 };
 
 const EditProfile = () => {
-  const { profile, updateProfile } = useProfileContext();
   const navigate = useNavigate();
+  const { profile, updateProfile } = useProfileContext();
 
   const [form, setForm] = useState(defaultForm);
   const [preview, setPreview] = useState("");
-  const [cvFile, setCvFile] = useState(null); // ✅ NEW
+  const [coverPreview, setCoverPreview] = useState("");
 
-  /* =============================
-     INIT PROFILE SYNC
-  ==============================*/
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [unsavedChanges, setUnsavedChanges] = useState(false);
+
+  const [skillInput, setSkillInput] = useState("");
+  const [profileStrength, setProfileStrength] = useState(0);
+
+  const autoSaveRef = useRef(null);
+
+  /* ================= LOAD PROFILE ================= */
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("providerProfile"));
+    const draft = JSON.parse(
+      localStorage.getItem("providerProfileDraft") || "{}"
+    );
 
-    if (saved || profile) {
-      const merged = { ...defaultForm, ...saved, ...profile };
+    const merged = {
+      ...defaultForm,
+      ...profile,
+      ...draft,
+    };
 
-      setForm(merged);
-      setPreview(merged.avatar || "");
-    }
+    setForm(merged);
+    setPreview(merged.avatar || "");
+    setCoverPreview(merged.coverPhoto || "");
   }, [profile]);
 
-  /* =============================
-     AUTO SAVE ENGINE
-  ==============================*/
+  /* ================= PROFILE STRENGTH ================= */
   useEffect(() => {
-    const delay = setTimeout(() => {
-      updateProfile(form);
-      localStorage.setItem("providerProfile", JSON.stringify(form));
-    }, 800);
+    let filled = 0;
+    const values = Object.values(form);
 
-    return () => clearTimeout(delay);
+    values.forEach((v) => {
+      if (Array.isArray(v)) {
+        if (v.length > 0) filled++;
+      } else if (v) {
+        filled++;
+      }
+    });
+
+    setProfileStrength(
+      Math.floor((filled / values.length) * 100)
+    );
   }, [form]);
 
-  /* =============================
-     HANDLE INPUTS
-  ==============================*/
+  /* ================= AUTOSAVE ================= */
+  useEffect(() => {
+    clearTimeout(autoSaveRef.current);
+
+    autoSaveRef.current = setTimeout(() => {
+      localStorage.setItem(
+        "providerProfileDraft",
+        JSON.stringify(form)
+      );
+
+      setUnsavedChanges(true);
+    }, 1200);
+
+    return () => clearTimeout(autoSaveRef.current);
+  }, [form]);
+
+  /* ================= BLOCK EXIT ================= */
+  useEffect(() => {
+    const handler = (e) => {
+      if (!unsavedChanges) return;
+      e.preventDefault();
+      e.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handler);
+    return () =>
+      window.removeEventListener("beforeunload", handler);
+  }, [unsavedChanges]);
+
+  /* ================= INPUT ================= */
   const handleChange = (e) => {
     setForm((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
+
+    setUnsavedChanges(true);
   };
 
-  /* =============================
-     IMAGE HANDLING
-  ==============================*/
-  const handleImage = (e) => {
-    const file = e.target.files[0];
+  /* ================= AVATAR ================= */
+  const handleAvatar = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
+    const url = URL.createObjectURL(file);
 
-      setForm((prev) => ({
-        ...prev,
-        avatar: imageUrl
-      }));
+    setPreview(url);
+    setForm((p) => ({ ...p, avatar: url }));
+    setUnsavedChanges(true);
+  };
 
-      setPreview(imageUrl);
+  /* ================= COVER ================= */
+  const handleCover = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+
+    setCoverPreview(url);
+    setForm((p) => ({ ...p, coverPhoto: url }));
+    setUnsavedChanges(true);
+  };
+
+  /* ================= SAVE ================= */
+  const saveProfile = async () => {
+    setSaving(true);
+
+    try {
+      await updateProfile(form);
+
+      localStorage.setItem("providerProfile", JSON.stringify(form));
+      localStorage.removeItem("providerProfileDraft");
+
+      setSaved(true);
+      setUnsavedChanges(false);
+
+      setTimeout(() => setSaved(false), 2500);
+    } catch (err) {
+      console.error(err);
     }
+
+    setSaving(false);
   };
 
-  /* =============================
-     🔥 CV AUTO-FILL (SMART MOCK)
-  ==============================*/
-  const handleCVUpload = async () => {
-    if (!cvFile) return alert("Upload CV first");
+  /* ================= SKILLS ================= */
+  const addSkill = () => {
+    if (!skillInput.trim()) return;
 
-    // 🔥 MOCK AI PARSER (replace with backend later)
-    const fakeData = {
-      fullName: "Adaku Henry",
-      email: "adaku@email.com",
-      phone: "+256700000000",
-      skills: "Cleaning, Plumbing, Electrical",
-      experience: "3+ years working with home services and client management",
-      bio: "Experienced service provider dedicated to quality work"
-    };
+    setForm((p) => ({
+      ...p,
+      skills: [...(p.skills || []), skillInput],
+    }));
 
-    // ✅ AUTO-FILL FORM
-    setForm((prev) => ({
-      ...prev,
-      ...fakeData
+    setSkillInput("");
+    setUnsavedChanges(true);
+  };
+
+  const removeSkill = (skill) => {
+    setForm((p) => ({
+      ...p,
+      skills: p.skills.filter((s) => s !== skill),
     }));
   };
 
-  /* =============================
-     NAVIGATION
-  ==============================*/
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (form.fullName || form.email) {
-        navigate("/provider/profile");
-      }
-    }, 1500);
+  /* ================= NAVIGATE SAFELY ================= */
+  const goToProfile = () => {
+    if (unsavedChanges) {
+      const ok = window.confirm("You have unsaved changes. Leave?");
+      if (!ok) return;
+    }
 
-    return () => clearTimeout(timer);
-  }, [form.fullName, form.email]);
+    navigate("/provider/profile");
+  };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded shadow space-y-4">
+    <div className="editProfileWrapper">
 
-      <h2 className="text-2xl font-bold">Edit Profile</h2>
+      {/* COVER */}
+      <div className="editCoverSection">
+        <img
+          src={coverPreview || "https://images.unsplash.com/photo-1497366754035-f200968a6e72"}
+          alt="cover"
+          className="editCoverImage"
+        />
+        <input type="file" onChange={handleCover} />
+      </div>
 
-      <p className="text-gray-500 text-sm">
-        ✨ Your profile updates automatically as you type
-      </p>
-
-      {/* 🔥 CV UPLOAD SECTION */}
-      <div className="border p-4 rounded bg-gray-50">
-        <label className="block font-medium mb-2">
-          Upload CV (Auto-fill profile)
-        </label>
-
-        <input
-          type="file"
-          accept=".pdf,.doc,.docx"
-          onChange={(e) => setCvFile(e.target.files[0])}
+      {/* HEADER */}
+      <div className="editHeaderCard">
+        <img
+          src={preview || "https://i.pravatar.cc/200"}
+          alt="avatar"
+          className="editAvatar"
         />
 
-        <button
-          onClick={handleCVUpload}
-          className="mt-2 px-4 py-2 bg-blue-600 text-white rounded"
-        >
-          Auto Fill From CV
+        <input type="file" onChange={handleAvatar} />
+
+        <div>
+          Profile Strength: {profileStrength}%
+        </div>
+      </div>
+
+      {/* ACTIONS */}
+      <div className="actionBar">
+
+        <button onClick={saveProfile} disabled={saving}>
+          {saving ? "Saving..." : "Save Profile"}
         </button>
+
+        <button onClick={goToProfile}>
+          Open Profile
+        </button>
+
       </div>
 
-      {/* PROFILE IMAGE */}
+      {/* WARNINGS */}
+      {unsavedChanges && (
+        <div className="warning">⚠ Unsaved changes</div>
+      )}
+
+      {saved && (
+        <div className="success">✔ Saved successfully</div>
+      )}
+
+      {/* FORM */}
+      <div className="formGrid">
+        <input name="fullName" value={form.fullName} onChange={handleChange} />
+        <input name="email" value={form.email} onChange={handleChange} />
+        <input name="phone" value={form.phone} onChange={handleChange} />
+      </div>
+
+      {/* SKILLS */}
       <div>
-        <label className="block font-medium">Profile Picture</label>
+        <input
+          value={skillInput}
+          onChange={(e) => setSkillInput(e.target.value)}
+          placeholder="Add skill"
+        />
 
-        <input type="file" onChange={handleImage} />
+        <button onClick={addSkill}>Add Skill</button>
 
-        {preview && (
-          <img
-            src={preview}
-            alt="Profile preview"
-            className="w-20 h-20 rounded-full mt-2 object-cover border"
-          />
-        )}
-      </div>
-
-      {/* FORM GRID */}
-      <div className="grid grid-cols-2 gap-4">
-
-        <input name="fullName" value={form.fullName || ""} onChange={handleChange} placeholder="Full Name" className="input" />
-        <input name="username" value={form.username || ""} onChange={handleChange} placeholder="Username" className="input" />
-        <input name="email" value={form.email || ""} onChange={handleChange} placeholder="Email" className="input" />
-        <input name="phone" value={form.phone || ""} onChange={handleChange} placeholder="Phone" className="input" />
-        <input name="city" value={form.city || ""} onChange={handleChange} placeholder="City" className="input" />
-        <input name="address" value={form.address || ""} onChange={handleChange} placeholder="Address" className="input" />
-        <input name="rate" value={form.rate || ""} onChange={handleChange} placeholder="Rate (UGX)" className="input" />
-        <input name="availability" value={form.availability || ""} onChange={handleChange} placeholder="Availability" className="input" />
-
-      </div>
-
-      <textarea name="bio" value={form.bio || ""} onChange={handleChange} placeholder="About you" className="input w-full" />
-
-      <input name="skills" value={form.skills || ""} onChange={handleChange} placeholder="Skills (comma separated)" className="input w-full" />
-
-      <textarea name="experience" value={form.experience || ""} onChange={handleChange} placeholder="Experience" className="input w-full" />
-
-      <input name="connections" value={form.connections || ""} onChange={handleChange} placeholder="Connections" className="input w-full" />
-
-      <div className="text-green-500 text-sm">
-        ✔ Profile is syncing automatically in real-time
+        {form.skills?.map((s, i) => (
+          <span key={i} onClick={() => removeSkill(s)}>
+            {s} ✕
+          </span>
+        ))}
       </div>
 
     </div>
